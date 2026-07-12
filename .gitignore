@@ -1,0 +1,12 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Large demo screen recording — not referenced by the site
+Recording 2026-07-09 155708.mp4
+
+# Local editor / tooling
+.vscode/
+.claude/
+*.log
