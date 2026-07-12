@@ -98,6 +98,7 @@
     navLinks.classList.remove("open");
     navToggle.classList.remove("active");
     backdrop.classList.remove("show");
+    if (nav) nav.classList.remove("menu-open");
     navToggle.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
   }
@@ -105,10 +106,20 @@
     navLinks.classList.add("open");
     navToggle.classList.add("active");
     backdrop.classList.add("show");
+    if (nav) nav.classList.add("menu-open"); // drops the nav backdrop-filter so the fixed drawer isn't clipped
     navToggle.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
   }
   if (navToggle && navLinks) {
+    // Explicit close (X) button inside the drawer
+    const navClose = document.createElement("button");
+    navClose.type = "button";
+    navClose.className = "nav__close";
+    navClose.setAttribute("aria-label", "Close menu");
+    navClose.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M18.3 5.71 12 12l6.3 6.29-1.42 1.42L10.59 13.4 4.3 19.71 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg>';
+    navClose.addEventListener("click", closeMenu);
+    navLinks.insertBefore(navClose, navLinks.firstChild);
+
     navToggle.addEventListener("click", () =>
       navLinks.classList.contains("open") ? closeMenu() : openMenu()
     );
@@ -289,6 +300,43 @@
     return ok;
   }
 
+  /* Per-form success copy (contextual, on-brand) */
+  const THANKS = {
+    newsletterForm: { title: "You’re in!", text: "Welcome to The Growth Memo — one sharp email a month, zero fluff. Watch your inbox to confirm your subscription.", dark: true, again: false },
+    bookingForm: { title: "Request received.", text: "Thanks — your strategy-call request just landed with our team. We’ll reply within one business day to lock in a time.", again: true },
+    ctaModalForm: { title: "Request received.", text: "Thanks — we’ve got your details. Our team will reach out within one business day to set up your call.", again: true },
+    contactForm: { title: "Message received.", text: "Thanks for reaching out. We’ll get back to you within one business day — keep an eye on your inbox.", again: true },
+  };
+
+  /* Replace the form with a premium animated thank-you state */
+  function showThanks(form) {
+    const cfg = THANKS[form.id] || { title: "Thank you!", text: "Your message is in. We’ll be in touch within one business day.", again: true };
+    form.reset();
+    const node = document.createElement("div");
+    node.className = "form-thanks" + (cfg.dark ? " form-thanks--on-dark" : "");
+    node.setAttribute("role", "status");
+    node.setAttribute("aria-live", "polite");
+    node.tabIndex = -1;
+    node.innerHTML =
+      '<span class="form-thanks__mark" aria-hidden="true"><svg viewBox="0 0 60 60">' +
+      '<circle class="ft-circle" cx="30" cy="30" r="25"/>' +
+      '<path class="ft-check" d="M18.5 31 L26 38.5 L42 21"/></svg></span>' +
+      '<h3>' + cfg.title + '</h3><p>' + cfg.text + '</p>' +
+      (cfg.again ? '<button type="button" class="btn btn--ghost btn--dark form-thanks__again">Send another</button>' : '');
+    form.appendChild(node);
+    form.classList.add("form--done");
+    const again = node.querySelector(".form-thanks__again");
+    if (again) {
+      again.addEventListener("click", function () {
+        form.classList.remove("form--done");
+        node.remove();
+        const first = form.querySelector("input:not([type=hidden]):not([name=_gotcha]), select, textarea");
+        if (first) first.focus();
+      });
+    }
+    if (node.focus) node.focus();
+  }
+
   function setupForm(form) {
     if (!form) return;
     const status = $(".form__status", form);
@@ -337,9 +385,9 @@
           headers: { Accept: "application/json" },
         });
         if (res.ok) {
-          form.reset();
-          status.textContent = "Thank you! Your message is in. Our team will reply within one business day.";
-          status.className = "form__status success";
+          status.textContent = "";
+          status.className = "form__status";
+          showThanks(form);
         } else {
           const data = await res.json().catch(() => ({}));
           status.textContent =
@@ -381,7 +429,10 @@
       '    <h3 id="ctaModalTitle">Book your free strategy call</h3>',
       '    <p class="modal__ctx">You’re enquiring about: <strong id="ctaModalService">Full-Service Growth</strong></p>',
       '  </div>',
-      '  <form class="modal__form" id="ctaModalForm" action="https://formspree.io/f/YOUR_BOOKING_FORM_ID" method="POST" novalidate>',
+      '  <form class="modal__form" id="ctaModalForm" action="https://formspree.io/f/mnjyayjo" method="POST" novalidate>',
+      '    <input type="hidden" name="_subject" value="New strategy-call request — ecommsyte" />',
+      '    <input type="hidden" name="form" value="CTA Modal Booking" />',
+      '    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />',
       '    <input type="hidden" name="interest" id="ctaModalInterest" value="Free Strategy Call" />',
       '    <div class="field--split">',
       '      <div class="field"><label for="m-name">Full name</label><input type="text" id="m-name" name="name" placeholder="Your name" required autocomplete="name" /><small class="field__error">Please enter your name.</small></div>',
@@ -453,7 +504,8 @@
       }
     });
 
-    $$('.js-open-modal, a[href$="#book"]').forEach((t) => {
+    // Header CTA (.nav__cta) opens the Calendly popup instead — see the Calendly IIFE below.
+    $$('.js-open-modal, a[href$="#book"]:not(.nav__cta)').forEach((t) => {
       t.addEventListener("click", (e) => { e.preventDefault(); open(t); });
     });
   })();
@@ -636,5 +688,118 @@
       else if (e.key === "Home") { e.preventDefault(); activate(0, true); }
       else if (e.key === "End") { e.preventDefault(); activate(tabs.length - 1, true); }
     });
+  });
+})();
+
+/* =========================================================
+   HEADER CTA — Calendly "book a call" popup (premium, on-theme)
+   Only the nav CTA (.nav__cta) opens it; other #book links keep
+   the existing contact modal. Calendly loads lazily on first open.
+   ========================================================= */
+(function () {
+  "use strict";
+  var triggers = Array.prototype.slice.call(document.querySelectorAll(".nav__cta"));
+  if (!triggers.length) return;
+
+  // Brand-themed Calendly embed (colors match the site palette)
+  var CAL_URL = "https://calendly.com/mailhussainali00/30min"
+    + "?hide_gdpr_banner=1&background_color=fcfaf7&text_color=1d1e20&primary_color=e6862d";
+
+  var modal = document.createElement("div");
+  modal.className = "cal-modal";
+  modal.id = "calModal";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = [
+    '<div class="cal-modal__overlay" data-cal-close></div>',
+    '<div class="cal-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="calModalTitle">',
+    '  <div class="cal-modal__head">',
+    '    <button class="cal-modal__close" type="button" data-cal-close aria-label="Close scheduler">',
+    '      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18.3 5.71 12 12l6.3 6.29-1.42 1.42L10.59 13.4 4.3 19.71 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg>',
+    '    </button>',
+    '    <span class="eyebrow eyebrow--light">Let’s talk growth</span>',
+    '    <h3 id="calModalTitle">Book your free strategy call</h3>',
+    '    <p class="cal-modal__ctx">Pick a time that works — a focused 30 minutes, no obligation.</p>',
+    '  </div>',
+    '  <div class="cal-modal__body">',
+    '    <div class="cal-modal__loader" aria-hidden="true"><span class="cal-modal__spinner"></span> Loading your calendar…</div>',
+    '    <div class="cal-inline" id="calInline"></div>',
+    '  </div>',
+    '</div>'
+  ].join("");
+  document.body.appendChild(modal);
+
+  var dialog = modal.querySelector(".cal-modal__dialog");
+  var closeBtn = modal.querySelector(".cal-modal__close");
+  var loader = modal.querySelector(".cal-modal__loader");
+  var inlineEl = modal.querySelector("#calInline");
+  var lastFocused = null;
+  var inited = false, loading = false;
+
+  function loadCalendly(cb) {
+    if (window.Calendly) { cb(); return; }
+    if (!document.querySelector('link[href*="calendly.com/assets/external/widget.css"]')) {
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://assets.calendly.com/assets/external/widget.css";
+      document.head.appendChild(link);
+    }
+    var existing = document.querySelector('script[src*="calendly.com/assets/external/widget.js"]');
+    if (existing) { existing.addEventListener("load", cb); return; }
+    var s = document.createElement("script");
+    s.src = "https://assets.calendly.com/assets/external/widget.js";
+    s.async = true;
+    s.onload = cb;
+    s.onerror = function () {
+      loader.innerHTML = 'Couldn’t load the scheduler. <a href="' + CAL_URL + '" target="_blank" rel="noopener">Open Calendly in a new tab</a>.';
+    };
+    document.head.appendChild(s);
+  }
+
+  function initWidget() {
+    if (inited || loading) return;
+    loading = true;
+    loadCalendly(function () {
+      if (window.Calendly && !inited) {
+        window.Calendly.initInlineWidget({ url: CAL_URL, parentElement: inlineEl });
+        inited = true;
+        // Calendly signals ready via postMessage; hide loader shortly after init.
+        setTimeout(function () { modal.classList.add("cal-ready"); }, 900);
+      }
+      loading = false;
+    });
+  }
+
+  function open() {
+    lastFocused = document.activeElement;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    initWidget();
+    setTimeout(function () { closeBtn.focus(); }, 60);
+  }
+  function close() {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+
+  triggers.forEach(function (t) {
+    t.addEventListener("click", function (e) { e.preventDefault(); open(); });
+  });
+  Array.prototype.forEach.call(modal.querySelectorAll("[data-cal-close]"), function (el) {
+    el.addEventListener("click", close);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (!modal.classList.contains("open")) return;
+    if (e.key === "Escape") { close(); return; }
+    if (e.key === "Tab") {
+      // Simple trap between the close button and the dialog (Calendly iframe manages its own focus).
+      var f = dialog.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   });
 })();

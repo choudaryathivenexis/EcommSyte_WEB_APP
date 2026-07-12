@@ -182,6 +182,15 @@ body.is-loading { overflow: hidden; }
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 6px 24px rgba(29, 30, 32, 0.08); padding: 0.55rem 0;
 }
+/* With the mobile drawer open, remove the nav's backdrop-filter — otherwise it
+   becomes the containing block for the position:fixed drawer and clips it. */
+.nav.menu-open { background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.nav.menu-open .brand__word { color: #fff; }
+.nav.menu-open .brand__text small { color: rgba(255, 255, 255, 0.6); }
+.nav.menu-open .nav__toggle span { background: #fff; }
+
+/* Drawer close button (mobile only — hidden inline on desktop) */
+.nav__close { display: none; }
 
 /* Every page opens on a dark hero → light nav text at top,
    flips to dark once the light scrolled header appears. */
@@ -1355,12 +1364,21 @@ body.is-loading { overflow: hidden; }
   /* Mobile nav */
   .nav__toggle { display: flex; }
   .nav__links {
-    position: fixed; inset: 0 0 0 auto; width: min(82vw, 340px);
+    position: fixed; inset: 0 0 0 auto; width: min(84vw, 350px);
     flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 0.3rem;
-    background: var(--white); padding: 5.5rem 1.4rem 2rem; box-shadow: -20px 0 50px rgba(29,30,32,0.2);
-    transform: translateX(100%); transition: transform 0.4s var(--ease); z-index: 90;
+    background: var(--white); padding: 5.4rem 1.4rem 2rem;
+    box-shadow: -24px 0 60px rgba(29,30,32,0.3); border-left: 1px solid var(--line);
+    transform: translateX(100%); transition: transform 0.42s var(--ease); z-index: 95;
+    overflow-y: auto; overscroll-behavior: contain;
   }
   .nav__links.open { transform: translateX(0); }
+  .nav__close {
+    display: grid; place-items: center; position: absolute; top: 1.05rem; right: 1.1rem;
+    width: 42px; height: 42px; border-radius: 50%; background: var(--cream);
+    border: 1px solid var(--line); color: var(--ink); flex: none;
+    transition: background 0.25s, color 0.25s, transform 0.35s var(--ease);
+  }
+  .nav__close:hover, .nav__close:focus-visible { background: var(--orange); color: var(--ink); transform: rotate(90deg); }
   .nav__link,
   .nav:not(.scrolled) .nav__link { color: var(--ink); }
   .nav__link.is-active,
@@ -1383,6 +1401,8 @@ body.is-loading { overflow: hidden; }
   .newsletter form { flex-direction: column; }
   .team-grid { grid-template-columns: 1fr; max-width: 24rem; margin-inline: auto; }
   .cta-band__inner { flex-direction: column; align-items: flex-start; }
+  /* Give the stacked hero room so the trust stats don't collide with the scroll cue */
+  .hero { padding-bottom: 6.5rem; }
 }
 
 @media (max-width: 460px) {
@@ -1638,6 +1658,69 @@ body.is-loading { overflow: hidden; }
 .bcard__thumb--dark { color: #fff; }
 /* Contact-fact badges → brand accent on the cream tile */
 .contact__facts li span:first-child { color: var(--orange); }
+
+/* =========================================================
+   FORM SUCCESS — premium animated "thank you" state
+   ========================================================= */
+form.form--done { display: block; }
+.form--done > *:not(.form-thanks) { display: none !important; }
+.form-thanks {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: clamp(1.2rem, 4vw, 2.2rem) 0.5rem; outline: none;
+  animation: ftIn 0.5s var(--ease) both;
+}
+@keyframes ftIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.form-thanks__mark { position: relative; width: 88px; height: 88px; margin-bottom: 1.3rem; display: grid; place-items: center; }
+.form-thanks__mark::before { content: ""; position: absolute; inset: -6px; border-radius: 50%; background: var(--grad-warm); opacity: 0.14; animation: ftPulse 2.4s ease-in-out infinite; }
+.form-thanks__mark svg { position: relative; width: 88px; height: 88px; overflow: visible; }
+.ft-circle { fill: none; stroke: var(--orange); stroke-width: 3; stroke-dasharray: 158; stroke-dashoffset: 158; animation: ftDraw 0.65s var(--ease) 0.1s forwards; }
+.ft-check { fill: none; stroke: var(--orange); stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 42; stroke-dashoffset: 42; animation: ftDraw 0.38s var(--ease) 0.55s forwards; }
+@keyframes ftDraw { to { stroke-dashoffset: 0; } }
+@keyframes ftPulse { 0%, 100% { transform: scale(1); opacity: 0.14; } 50% { transform: scale(1.14); opacity: 0.05; } }
+.form-thanks h3 { font-size: clamp(1.35rem, 3.2vw, 1.75rem); line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 0.55rem; }
+.form-thanks p { color: var(--muted); font-size: 1rem; line-height: 1.65; max-width: 36ch; }
+.form-thanks__again { margin-top: 1.5rem; }
+.form-thanks--on-dark h3 { color: #fff; }
+.form-thanks--on-dark p { color: rgba(255, 255, 255, 0.72); }
+@media (prefers-reduced-motion: reduce) {
+  .ft-circle, .ft-check { stroke-dashoffset: 0; animation: none; }
+  .form-thanks__mark::before { animation: none; }
+}
+
+/* =========================================================
+   CALENDLY MODAL — header-CTA "book a call" popup
+   ========================================================= */
+.cal-modal { position: fixed; inset: 0; z-index: 210; display: grid; place-items: center; padding: clamp(0.6rem, 3vw, 1.5rem); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; }
+.cal-modal.open { opacity: 1; visibility: visible; }
+.cal-modal__overlay { position: absolute; inset: 0; background: rgba(20, 21, 23, 0.62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.cal-modal__dialog {
+  position: relative; z-index: 1; display: flex; flex-direction: column;
+  width: min(500px, 96vw); height: min(760px, 92vh);
+  background: var(--paper); border-radius: var(--radius); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1); box-shadow: var(--shadow-lg);
+  transform: translateY(16px) scale(0.98); opacity: 0; transition: transform 0.4s var(--ease), opacity 0.4s;
+}
+.cal-modal.open .cal-modal__dialog { transform: none; opacity: 1; }
+
+.cal-modal__head { position: relative; overflow: hidden; padding: clamp(1.3rem, 4vw, 1.8rem) clamp(1.3rem, 4vw, 1.9rem) clamp(1.1rem, 3vw, 1.4rem); background: linear-gradient(150deg, var(--ink-2), var(--ink)); color: #fff; flex: none; }
+.cal-modal__head::after { content: ""; position: absolute; width: 240px; height: 240px; border-radius: 50%; background: var(--orange); filter: blur(90px); opacity: 0.35; top: -120px; right: -60px; pointer-events: none; }
+.cal-modal__head .eyebrow { position: relative; margin-bottom: 0.4rem; }
+.cal-modal__head h3 { position: relative; color: #fff; font-size: clamp(1.3rem, 3.5vw, 1.6rem); line-height: 1.15; }
+.cal-modal__ctx { position: relative; margin-top: 0.45rem; color: rgba(255,255,255,0.72); font-size: 0.92rem; max-width: 40ch; }
+.cal-modal__close { position: absolute; top: 0.9rem; right: 0.9rem; z-index: 3; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); color: #fff; transition: background 0.25s, color 0.25s, transform 0.35s var(--ease); }
+.cal-modal__close:hover { background: var(--orange); color: var(--ink); transform: rotate(90deg); }
+
+.cal-modal__body { position: relative; flex: 1; min-height: 0; background: #fcfaf7; }
+.cal-modal__loader { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem; color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+.cal-modal.cal-ready .cal-modal__loader { display: none; }
+.cal-modal__spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(230,134,45,0.3); border-top-color: var(--orange); animation: spin 0.8s linear infinite; }
+.cal-inline { position: relative; z-index: 2; width: 100%; height: 100%; min-width: 0; }
+.cal-inline iframe { width: 100% !important; height: 100% !important; }
+
+@media (max-width: 600px) {
+  .cal-modal { padding: 0; }
+  .cal-modal__dialog { width: 100vw; height: 100vh; height: 100dvh; max-height: none; border-radius: 0; border: none; }
+}
 
 /* =========================================================
    SOCIAL SIDEBAR TRAY (site-wide, injected by JS)
