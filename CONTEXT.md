@@ -152,12 +152,12 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
 | 9 | Forms | `setupForm()` on `#bookingForm`, `#contactForm`, `#newsletterForm` + the modal form. Client-side validation (`.field` / `.invalid` / `.field__error`) + Formspree AJAX POST with `.form__status` messaging. Guards against unconfigured `YOUR_` endpoints. |
 | 10 | CTA modal | Built in JS (`initModal`), appended to `<body>`. Opens on any `.js-open-modal` or `a[href$="#book"]`. Reads `data-cta` / `data-service` off the trigger to pre-fill the service. Full focus-trap + Escape + overlay close. |
 | 11 | FAQ accordion | Native `<details class="faq__item">`; opening one closes siblings within a `.faq`. |
-| 12 | Social sidebar tray | Separate IIFE builds `.social-tray` (fixed left rail) and appends it to `<body>` on every page. Links/icons defined in the `LINKS`/`ICONS` maps in script.js (per-icon viewBox via `VIEWBOX`) — uses the site's `YOUR_HANDLE` / WhatsApp placeholders. Hover reveals a slide-out label + brand-colour fill. Hidden below 992px (footer socials cover mobile). |
+| 12 | Social sidebar tray | Separate IIFE builds `.social-tray` (fixed left rail) and appends it to `<body>` on every page. Links/icons defined in the `LINKS`/`ICONS` maps in script.js (per-icon viewBox via `VIEWBOX`) — the four real handles: LinkedIn, Facebook, WhatsApp, Email. Hover reveals a slide-out label + brand-colour fill. Hidden below 992px (footer socials cover mobile). |
 | — | Footer year | Fills `#year` with the current year. |
 
 ### Forms (Formspree)
 - Provider: **Formspree** (AJAX `fetch` POST, expects JSON). No backend of our own.
-- Endpoints are placeholders — see [Placeholders](#5-placeholders--must-configure-before-launch).
+- All forms POST to the live endpoint **`https://formspree.io/f/xaqrqpwa`** (booking, contact, newsletter, CTA-modal). `setupForm()` handles validation + submit; on success it swaps in an animated thank-you state.
 - Field names submitted: `name`, `email`, `store`, `revenue`, `service`, `message`,
   and hidden `interest` (modal only).
 
@@ -195,7 +195,7 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
   from `assets/team/` — now **real headshot JPGs** (`.tm__portrait` sits at `z-index:1`,
   above the grid texture and below the base fade; `object-fit: cover; object-position: center 22%`
   keeps faces framed). A frosted-glass `.tm__chip` monogram and a hover-reveal `.tm__social`
-  LinkedIn button (still the placeholder company URL). Below is `.tm__body` with name, a
+  LinkedIn button (points to the real company LinkedIn). Below is `.tm__body` with name, a
   `.tm__role` pill, and bio. **Real team (6): Abdul Moeed (CEO & Founder), Shahzaib Rafiq
   (COO & Co-Founder), Ali Husnain (Senior Brand Manager), Awais Ilyas (Senior Catalog Manager),
   Usman Mirza (Product Research & Sourcing Manager), Farhan Mirza (Creative Design Manager).**
@@ -212,7 +212,7 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
   sub-services (40 total) that carry premium dark SVG-motif banners → pricing `#plans`
   (**Ignite** from $1.5k/mo · **Accelerate** from $3.5k/mo, "Most popular" · **Dominate**
   custom) → footer. Plan buttons use `.js-open-modal` with `data-cta`.
-- **about.html:** page-hero → story → mission/values → results/counters → team → journey timeline.
+- **about.html:** page-hero → story ("Who we are") → **expertise** (`.caps` capability chip cloud, 13 items) → **vision & mission** (`.vm-grid` — light Vision card + dark Mission card) → **core values** (`.scard` grid, the 6 real values) → results/counters → **why choose** (`.reasons` 2-col checklist, 6 reasons) → team → journey timeline → CTA. Content reflects the real "About Ecommsyte" copy (multi-marketplace: Amazon, Walmart, Shopify). New components live in styles.css under "ABOUT — expertise chips · vision/mission · why-choose".
 - **testimonials.html:** page-hero → testimonials grid → results.
 - **blog.html:** page-hero → article grid (7 `.bcard` **image cards** linking to full posts) →
   newsletter signup (`#newsletterForm`, `#n-email`).
@@ -244,12 +244,11 @@ Search the codebase for **`YOUR_`** to find every one.
 
 | Placeholder | Where | Replace with |
 |-------------|-------|--------------|
-| `YOUR_BOOKING_FORM_ID` | contact.html booking form + script.js modal form | Formspree booking form ID |
-| `YOUR_CONTACT_FORM_ID` | contact.html quick-message form | Formspree contact form ID |
-| `YOUR_NEWSLETTER_FORM_ID` | blog.html newsletter form | Formspree newsletter form ID |
-| `YOUR_HANDLE` | Social links in nav, footer, contact, homepage JSON-LD (LinkedIn, Facebook, Instagram, X) | Real profile handles |
-| `wa.me/920000000000` | contact.html WhatsApp link | Real WhatsApp number |
 | `https://www.ecommsyte.com/` | canonical/OG URLs on every page | Final production domain |
+
+**Resolved (real values now live):**
+- **Forms** → single Formspree endpoint `https://formspree.io/f/xaqrqpwa` (all 4: booking, contact, newsletter, CTA-modal).
+- **Social handles** (footer, contact card, JS tray, JSON-LD `sameAs`) → exactly four: LinkedIn `linkedin.com/company/ecommsyte/`, Facebook `facebook.com/ecommsyte/`, WhatsApp `wa.me/+923288090606`, Email `ecomsyte@gmail.com`. **Instagram & X were removed site-wide.** Note: the contact **email uses single-m `ecomsyte@gmail.com`** (as provided — differs from the double-m `ecommsyte` brand/domain).
 
 Also: the **team section** (index + about), the **brand marquee** (20 real client logos), and
 the **testimonials** (10 real 5-star reviews on testimonials.html + 3 on the index preview —
