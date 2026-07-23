@@ -195,8 +195,8 @@ body.is-loading { overflow: hidden; }
 /* Every page opens on a dark hero → light nav text at top,
    flips to dark once the light scrolled header appears. */
 .nav:not(.scrolled) .nav__link { color: var(--white); }
-.nav:not(.scrolled) .nav__link:hover { color: var(--amber); }
-.nav:not(.scrolled) .nav__link.is-active { color: var(--orange); }
+.nav:not(.scrolled) .nav__link:hover { color: var(--ink); }
+.nav:not(.scrolled) .nav__link.is-active { color: var(--ink); }
 .nav:not(.scrolled) .brand__word { color: var(--white); }
 .nav:not(.scrolled) .brand__text small { color: rgba(255, 255, 255, 0.6); }
 .nav:not(.scrolled) .nav__toggle span { background: var(--white); }
@@ -218,21 +218,40 @@ body.is-loading { overflow: hidden; }
 
 .nav__links { display: flex; align-items: center; gap: 0.1rem; }
 .nav__link {
+  display: inline-flex; align-items: center; gap: 0;
   font-family: var(--ff-head); font-weight: 600; font-size: 0.9rem; color: var(--ink);
-  padding: 0.5rem 0.7rem; border-radius: 999px; position: relative; transition: color 0.2s; white-space: nowrap;
+  padding: 0.55rem 0.62rem; border-radius: 999px; position: relative; overflow: hidden; z-index: 0;
+  transition: color 0.3s var(--ease), background 0.35s var(--ease),
+              transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s var(--ease);
+  white-space: nowrap;
+}
+.nav__ico, .nav__label { position: relative; z-index: 2; }
+.nav__ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s; }
+/* Desktop: icon-only, label reveals on hover/focus (and stays for the active page) */
+.nav__label {
+  display: inline-block; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+  transition: max-width 0.42s var(--ease), opacity 0.3s ease, margin-left 0.42s var(--ease);
+}
+/* Glass shine that sweeps across the pill on hover */
+.nav__link::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(115deg, transparent 32%, rgba(255,255,255,0.5) 50%, transparent 68%);
+  transform: translateX(-135%);
+}
+/* Premium hover / active: liquid gradient pill, spring lift, warm glow, shine sweep */
+.nav__link:hover, .nav__link:focus-visible, .nav__link.is-active {
+  color: var(--ink); background: var(--grad-warm);
+  transform: translateY(-2px); box-shadow: 0 12px 26px rgba(230,134,45,0.45);
+}
+.nav__link:hover::before, .nav__link:focus-visible::before { transform: translateX(135%); transition: transform 0.75s var(--ease); }
+.nav__link:hover .nav__ico, .nav__link:focus-visible .nav__ico, .nav__link.is-active .nav__ico { opacity: 1; transform: scale(1.14); }
+.nav__link:hover .nav__label, .nav__link:focus-visible .nav__label, .nav__link.is-active .nav__label {
+  max-width: 12ch; opacity: 1; margin-left: 0.45rem;
 }
 @media (max-width: 1040px) and (min-width: 761px) {
   .nav__link { padding: 0.5rem 0.55rem; font-size: 0.84rem; }
   .nav__cta { margin-left: 0.2rem; }
 }
-.nav__link::after {
-  content: ""; position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
-  width: 0; height: 2px; background: var(--grad-warm); border-radius: 2px; transition: width 0.25s var(--ease);
-}
-.nav__link:hover { color: var(--orange); }
-.nav__link:hover::after { width: 60%; }
-.nav__link.is-active { color: var(--orange); }
-.nav__link.is-active::after { width: 60%; }
 .nav__cta { margin-left: 0.4rem; }
 
 .nav__toggle { display: none; flex-direction: column; gap: 5px; padding: 8px; border-radius: 10px; }
@@ -742,6 +761,7 @@ body.is-loading { overflow: hidden; }
 
 /* Team */
 .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; }
+.team-grid--3 { grid-template-columns: repeat(3, 1fr); }   /* 6-member grid (About) → 3 + 3 */
 .tm {
   position: relative; overflow: hidden; display: flex; flex-direction: column;
   background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
@@ -773,7 +793,8 @@ body.is-loading { overflow: hidden; }
   background: linear-gradient(180deg, transparent 55%, rgba(29,30,32,0.35));
 }
 .tm__portrait {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 22%;   /* keep faces framed; sits above grid texture, below the base fade */
   transition: transform 0.55s var(--ease);
 }
 .tm:hover .tm__portrait { transform: scale(1.045); }
@@ -1303,16 +1324,25 @@ body.is-loading { overflow: hidden; }
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.logo-track { display: flex; align-items: center; gap: clamp(1.8rem, 5vw, 4.2rem); width: max-content; animation: scrollx 40s linear infinite; }
+.logo-track { display: flex; align-items: center; gap: clamp(0.9rem, 1.5vw, 1.4rem); width: max-content; animation: scrollx 40s linear infinite; }
 .logo-track--reverse { animation: scrollx-rev 40s linear infinite; }
 .logos:hover .logo-track { animation-play-state: paused; }
 @keyframes scrollx-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-/* real image logos — muted "logo wall" that brightens on hover, responsive height */
+/* real client logos — normalized white "logo chips": full color & bright, lift on hover.
+   object-fit:contain guarantees every logo fits inside its chip regardless of aspect ratio */
 .logo-item {
-  height: clamp(22px, 4.6vw, 38px); width: auto; flex: none; user-select: none;
-  opacity: 0.55; transition: opacity 0.3s, transform 0.3s var(--ease);
+  flex: none; display: flex; align-items: center; justify-content: center; user-select: none;
+  width: clamp(124px, 15vw, 172px); height: clamp(70px, 9vw, 96px);
+  padding: clamp(14px, 1.6vw, 22px);
+  background: #fff; border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(20,22,26,0.05); overflow: hidden;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s;
 }
-.logo-item:hover { opacity: 1; transform: translateY(-2px); }
+.logo-item img {
+  width: 100%; height: 100%; object-fit: contain; display: block;
+}
+.logo-item:hover { transform: translateY(-5px); box-shadow: 0 16px 34px rgba(20,22,26,0.13); border-color: rgba(230,134,45,0.35); }
+.logo-item:hover img { transform: scale(1.04); transition: transform 0.35s var(--ease); }
 
 /* =========================================================
    MODAL — premium popup contact form
@@ -1405,8 +1435,14 @@ body.is-loading { overflow: hidden; }
   .nav:not(.scrolled) .nav__link { color: var(--ink); }
   .nav__link.is-active,
   .nav:not(.scrolled) .nav__link.is-active { color: var(--orange); }
-  .nav__link { padding: 0.9rem 1rem; border-radius: 12px; font-size: 1.05rem; }
-  .nav__link:hover { background: rgba(230,134,45,0.08); }
+  .nav__link { padding: 0.9rem 1rem; border-radius: 12px; font-size: 1.05rem; overflow: visible; }
+  .nav__link::before { display: none; }
+  /* Drawer: icon + label always visible (never collapsed/clamped), calm treatment */
+  .nav__label,
+  .nav__link:hover .nav__label,
+  .nav__link:focus-visible .nav__label,
+  .nav__link.is-active .nav__label { max-width: none; opacity: 1; overflow: visible; margin-left: 0.75rem; }
+  .nav__link:hover, .nav__link.is-active { background: rgba(230,134,45,0.1); color: var(--orange); transform: none; box-shadow: none; }
   .nav__link::after { display: none; }
   .nav__cta { margin: 0.8rem 0 0; text-align: center; }
   .nav-backdrop { position: fixed; inset: 0; background: rgba(29,30,32,0.55); opacity: 0; visibility: hidden; transition: opacity 0.3s; z-index: 89; backdrop-filter: blur(2px); }
@@ -1474,7 +1510,7 @@ body.is-loading { overflow: hidden; }
 .post-hero__meta .sep { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.3); }
 .post-author { display: inline-flex; align-items: center; gap: 0.6rem; }
 .post-author__av { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: linear-gradient(160deg, var(--ink-3), var(--ink)); color: #fff; font-family: var(--ff-head); font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.14); }
-.post-author__av img { width: 100%; height: 100%; object-fit: cover; }
+.post-author__av img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
 .post-author strong { color: #fff; font-weight: 600; }
 
 /* Cover image (overlaps the hero, cinematic) */
@@ -1540,7 +1576,7 @@ body.is-loading { overflow: hidden; }
 /* Author card */
 .post__author-card { display: flex; gap: 1.2rem; align-items: flex-start; margin: 2.6rem 0 0; padding: clamp(1.4rem, 3.5vw, 1.8rem); background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
 .post__author-photo { flex: none; width: 68px; height: 68px; border-radius: 18px; overflow: hidden; position: relative; background: radial-gradient(120px 90px at 80% -10%, rgba(230,134,45,0.55), transparent 70%), linear-gradient(160deg, var(--ink-3), var(--ink)); }
-.post__author-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.post__author-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 22%; }
 .post__author-label { display: block; font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 .post__author-card h3 { font-size: 1.15rem; margin: 0.25rem 0 0.1rem; }
 .post__author-role { display: block; color: var(--orange); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.6rem; }
@@ -1802,8 +1838,8 @@ form.form--done { display: block; }
   .float-card { animation: none; }
   .marquee__track { animation: none; }
   .logo-track { animation: none; transform: none; }
-  /* wrap logos into a static, centered grid when motion is reduced */
+  /* wrap all logos into one static, centered grid when motion is reduced (drop loop duplicates) */
   .logo-marquee { -webkit-mask-image: none; mask-image: none; }
-  .logo-track { flex-wrap: wrap; justify-content: center; width: 100%; row-gap: clamp(1rem, 3vw, 1.6rem); }
-  .logo-track--reverse { display: none; }
+  .logo-track { flex-wrap: wrap; justify-content: center; width: 100%; gap: 0.7rem; }
+  .logo-item[aria-hidden="true"] { display: none; }
 }

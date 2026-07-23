@@ -624,23 +624,36 @@
 })();
 
 /* =========================================================
-   ABOUT stats — smooth count-up on scroll into view
+   Stat counters — smooth count-up on scroll into view
+   (hero highlights + About stats; supports prefix/suffix)
    ========================================================= */
 (function () {
   "use strict";
-  var els = Array.prototype.slice.call(document.querySelectorAll(".astat__count[data-count]"));
-  if (!els.length) return;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var items = [];
 
-  function run(el) {
-    var target = parseInt(el.getAttribute("data-count"), 10) || 0;
-    if (reduce || !("requestAnimationFrame" in window)) { el.textContent = target; return; }
-    var dur = 1600, start = null;
+  // About stats — explicit data-count (+ optional prefix/suffix)
+  Array.prototype.forEach.call(document.querySelectorAll(".astat__count[data-count]"), function (el) {
+    items.push({ el: el, pre: el.getAttribute("data-prefix") || "", target: parseInt(el.getAttribute("data-count"), 10) || 0, suf: el.getAttribute("data-suffix") || "" });
+  });
+  // Hero highlights — parsed from the existing text so markup/styling is untouched ($40M+, 120+, 96%)
+  Array.prototype.forEach.call(document.querySelectorAll(".hero__trust strong"), function (el) {
+    var m = /^(\D*?)([\d,]+)(\D*)$/.exec((el.textContent || "").trim());
+    if (m) items.push({ el: el, pre: m[1], target: parseInt(m[2].replace(/,/g, ""), 10) || 0, suf: m[3] });
+  });
+  if (!items.length) return;
+
+  function itemFor(el) { for (var i = 0; i < items.length; i++) if (items[i].el === el) return items[i]; }
+  function fmt(it, v) { return it.pre + v + it.suf; }
+  function run(it) {
+    if (!it) return;
+    if (reduce || !("requestAnimationFrame" in window)) { it.el.textContent = fmt(it, it.target); return; }
+    var dur = 1700, start = null;
     function tick(now) {
       if (start === null) start = now;
       var p = Math.min((now - start) / dur, 1);
       var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
-      el.textContent = Math.round(eased * target);
+      it.el.textContent = fmt(it, Math.round(eased * it.target));
       if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
@@ -649,12 +662,12 @@
   if ("IntersectionObserver" in window && !reduce) {
     var io = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) { run(e.target); obs.unobserve(e.target); }
+        if (e.isIntersecting) { run(itemFor(e.target)); obs.unobserve(e.target); }
       });
     }, { threshold: 0.6 });
-    els.forEach(function (el) { io.observe(el); });
+    items.forEach(function (it) { io.observe(it.el); });
   } else {
-    els.forEach(run);
+    items.forEach(run);
   }
 })();
 
