@@ -65,8 +65,6 @@ WEB/
 │   ├── brands/         20 REAL client-logo JPGs (trimmed, normalized to white "logo chips",
 │   │                   ~330px, 3–18 KB) for the homepage "trusted by" marquee. 1000×1000
 │   │                   source originals kept locally in brands/src/ (untracked, not committed).
-│   ├── logos/          4 sample SVG marks (northpeak/verdant/aura/kettle-co) — now used ONLY
-│   │                   by the case-study section (still fictional sample brands)
 │   ├── team/           6 real headshot JPGs (abdul-moeed, shahzaib-rafiq, ali-husnain,
 │   │                   awais-ilyas, usman-mirza, farhan-mirza) — optimized ~600×720, 44–51 KB.
 │   │                   Source originals kept locally in team/pics/ (untracked, not committed).
@@ -174,8 +172,23 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
   8-service preview grid (each card has a premium SVG-art banner) → 4-step process →
   results/counters → **brand-logo marquee (`.logos`, 20 real client logos from
   `assets/brands/`)** → case studies → testimonials preview →
-  team → **blog/insights section (`#insights`, 3 `.bcard` articles linking to blog.html)**
-  → CTA band → footer.
+  team → **blog/insights section (`#insights`)** → CTA band → footer.
+- **Blog/insights section (`#insights`, redesigned, namespaced `.blogx-*`)**: lead+index
+  hierarchy, NOT equal cards. Header = headline left + "All articles →" + article count,
+  closed by a hairline. Grid is asymmetric: **7/5 at ≥1280, 6/6 at 1024–1279, stacked <1024**
+  (`minmax(0,…)` tracks to avoid blowout). **Featured** (7-col) = full-bleed 16:10 image with a
+  bottom scrim, chip/title/meta ON the image, `--radius`, soft warm shadow, stretched link on
+  the title (`::after` covers the card via grid-overlap so the body isn't a positioned
+  ancestor). **Index** (5-col) = hairline rows (no cards): index number, 96px thumb, chip →
+  title → meta; rows keep thumbnail-left even <768. Signature "report" treatment on all
+  dates/read-time/index/count: uppercase, wide tracking, `tabular-nums` (Inter — no mono face
+  loaded). Photos graded `saturate(.88) contrast(1.04)`. Reveal = one IntersectionObserver
+  (threshold .15, 70ms stagger, translateY(16px)); **no-JS + reduced-motion safe** (content
+  only hidden once JS arms it). Posts are **static HTML** (SEO). Images reuse the 7 posts'
+  Unsplash URLs (no blog images on disk). **NOTE:** the old `.bcard`/`.bgrid` CSS was NOT
+  deleted — it's shared by blog.html + all 7 post pages (deleting would break them).
+- **`--orange-ink: #A85E12`** (4.9:1 on white) — accessible small accent text; brand
+  `--orange` (2.7:1) stays for fills, dots, icons, and large text only.
 - **Brand marquee (`.logos`)**: two auto-scrolling `.logo-track` rows of **20 real client
   logos** from `assets/brands/` (10 per row, each row duplicated for a seamless loop; colored
   brands distributed across both rows). Each `.logo-item` is a **white "logo chip"** (fixed
@@ -250,11 +263,18 @@ Search the codebase for **`YOUR_`** to find every one.
 - **Forms** → single Formspree endpoint `https://formspree.io/f/xaqrqpwa` (all 4: booking, contact, newsletter, CTA-modal).
 - **Social handles** (footer, contact card, JS tray, JSON-LD `sameAs`) → exactly four: LinkedIn `linkedin.com/company/ecommsyte/`, Facebook `facebook.com/ecommsyte/`, WhatsApp `wa.me/+923288090606`, Email `ecomsyte@gmail.com`. **Instagram & X were removed site-wide.** Note: the contact **email uses single-m `ecomsyte@gmail.com`** (as provided — differs from the double-m `ecommsyte` brand/domain).
 
-Also: the **team section** (index + about), the **brand marquee** (20 real client logos), and
-the **testimonials** (10 real 5-star reviews on testimonials.html + 3 on the index preview —
-feature = Jeff Entel; metric chips removed since the real reviews are qualitative) now use
-**real content**. Only the **case-study metrics** and the **results band** stats
-(47% / 96% / 120+ / 4.9★) remain **sample/illustrative content**.
+Also: the **team section** (index + about), the **brand marquee** (20 real client logos), the
+**testimonials** (10 real 5-star reviews on testimonials.html + 3 on the index preview —
+feature = Jeff Entel; metric chips removed since the real reviews are qualitative), and the
+**homepage case studies** now use **real content**. The 4 case-study tabs
+(`#work`, index.html) are the founder's **real, anonymized portfolio results**: Multi-Account
+Scale ($1.26M+ sales · 4.47x ROAS · 22.35% ACoS · 19,676+ orders), Kitchen Storage Launch
+(ACoS 48→24% · +132% sales · +45% CTR), Home & Kitchen UAE (1,789% YoY · 3.7x ROAS · 28.10%
+ACoS · AED 35K+), and Listing Compliance / Account Health (100% listings restored · −80% policy
+warnings · A+ quality). Each panel = eyebrow/title/desc + italic result callout + a **2×2
+metric grid** (`.cs-stat` pills) + a dark **hero-stat** visual (`.cs-hero`, replaced the old
+brand-logo `.cs-logo`). The old `assets/logos/` sample SVGs are deleted. **Still illustrative:**
+only the **results band** stats (47% / 96% / 120+ / 4.9★) on testimonials.html.
 
 ---
 

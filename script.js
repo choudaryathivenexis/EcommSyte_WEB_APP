@@ -812,4 +812,29 @@
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   });
+})();
+
+/* =========================================================
+   FROM THE BLOG — scoped reveal (IntersectionObserver)
+   No-JS / reduced-motion safe: elements stay visible unless
+   we can actually animate them.
+   ========================================================= */
+(function () {
+  "use strict";
+  var items = document.querySelectorAll(".blogx-fx");
+  if (!items.length) return;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || !("IntersectionObserver" in window)) return; // leave content shown
+  items.forEach(function (el) { el.classList.add("is-armed"); });
+  var io = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      el.style.transitionDelay = (Number(el.dataset.fx || 0) * 70) + "ms";
+      el.classList.add("is-in");
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.15 });
+  items.forEach(function (el) { io.observe(el); });
 })();
+
