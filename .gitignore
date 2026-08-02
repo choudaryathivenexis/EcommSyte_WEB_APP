@@ -6,13 +6,25 @@ desktop.ini
 # Large demo screen recording — not referenced by the site
 Recording 2026-07-09 155708.mp4
 
-# Team photo source originals (heavy, ~8.7MB) — optimized versions live in assets/team/*.jpg
-assets/team/pics/
+# Team photo source originals (heavy) — optimized versions live in static/assets/team/*.jpg
+static/assets/team/pics/
 
-# Brand-logo source originals (heavy, 1000×1000) — optimized chips live in assets/brands/*.jpg
-assets/brands/src/
+# Brand-logo source originals (heavy, 1000×1000) — optimized chips live in static/assets/brands/*.jpg
+static/assets/brands/src/
+
+# Python / Flask
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+.pytest_cache/
+# Flask instance folder — keep the dir, ignore its (secret/runtime) contents
+instance/*
+!instance/.gitkeep
+*.log
 
 # Local editor / tooling
 .vscode/
 .claude/
-*.log

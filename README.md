@@ -1,27 +1,77 @@
 # ecommsyte — Strategy-Driven Amazon Growth Agency
 
 A premium, hand-built marketing website for **ecommsyte**, a full-service Amazon growth
-agency. Static multi-page site — no framework, no build step, no dependencies.
-
-> Built with plain HTML, CSS, and vanilla JavaScript. Just open it in a browser (or run
-> the tiny dev server below) — there is nothing to compile or install.
+agency — served by a small, modular **Flask** application. The pages (`templates/`) and
+assets (`static/`) are hand-written HTML, CSS, and vanilla JavaScript; there is no build
+step and no CSS/JS framework. Flask renders the pages **byte-for-byte** (Jinja tuned to
+preserve the exact source bytes), so the rendered UI/UX is 100% hand-authored.
 
 ---
 
 ## Quick start
 
 ```bash
-# From the project root (this folder):
-python -m http.server 5599
-# then open http://localhost:5599
+python -m pip install -r requirements.txt
+python run.py                          # dev  → http://127.0.0.1:5000
 ```
 
-There is a matching VS Code launch config in [.claude/launch.json](.claude/launch.json)
-(profile: **ecommsyte-static**, port **5599**).
+---
 
-Any static file server works (`npx serve`, Live Server extension, etc.). Opening the
-`.html` files directly via `file://` mostly works too, but a server is recommended so
-fonts, forms, and relative links behave correctly.
+## Running & deploying
+
+```bash
+python run.py                          # dev server (debug on)  → http://127.0.0.1:5000
+gunicorn wsgi:app                      # production — Linux / macOS
+waitress-serve --port=8000 wsgi:app    # production — Windows
+flask --app wsgi run                   # Flask CLI (reads .flaskenv / .env)
+pytest                                 # run the test suite (byte-identity + routes)
+```
+
+Deploy to any Python host (Render, Railway, Fly.io, a VPS…) — a `Procfile` is included.
+Config comes from the environment (`APP_ENV`, `SECRET_KEY`, `PORT`, `USE_PROXY_FIX`, …);
+see [.env.example](.env.example). Contact/booking forms post to Formspree client-side.
+
+## Project structure
+
+```
+WEB/
+├── templates/                 all page HTML (rendered by Flask) + 404.html
+├── static/                    styles.css · script.js · favicon.svg · assets/
+├── ecommsyte/                 the Flask application package
+│   ├── __init__.py            create_app() application factory
+│   ├── config.py              Base / Development / Production / Testing (env-driven)
+│   ├── extensions.py          optional middleware (ProxyFix behind a proxy)
+│   ├── security.py            non-breaking security headers
+│   ├── errors.py              on-brand 404 handler
+│   └── blueprints/
+│       ├── pages.py           marketing pages (clean URL + legacy .html alias)
+│       └── ops.py             /healthz · /favicon.ico
+├── tests/test_routes.py       asserts every route is byte-for-byte identical
+├── instance/                  Flask instance folder (git-ignored contents)
+├── wsgi.py  run.py            production entry · dev server
+└── requirements*.txt  Procfile  .flaskenv  .env.example
+```
+
+Pages live in `templates/` (rendered with `render_template`); `static/` is served at the
+**site root** (`static_url_path=""`) so the HTML's relative paths (`styles.css`, `assets/…`)
+resolve unchanged — **no HTML was modified**, and `pytest` proves every response is
+byte-for-byte identical to its source file.
+
+**Routing.** Every page is reachable at a clean URL **and** its legacy `.html` URL
+(so existing internal links keep working unchanged):
+
+| Clean URL | Legacy URL | Serves |
+|-----------|-----------|--------|
+| `/` | `/index.html` | `index.html` |
+| `/about` · `/services` · `/testimonials` · `/blog` · `/careers` · `/contact` | `…​.html` | the matching page |
+| `/blog-2026-growth-playbook` (all 7 posts) | `…​.html` | the article |
+| `/styles.css` · `/script.js` · `/favicon.svg` · `/assets/<path>` | — | static assets at the site root |
+| `/healthz` | — | JSON health check |
+
+Pages are served from the **URL root** (never under a sub-path) so the HTML's relative
+asset paths resolve exactly as in the static build — no HTML was modified. Contact/booking
+forms continue to post to Formspree client-side, unchanged. Deploy to any Python host
+(Render, Railway, Fly.io, a VPS…); a `Procfile` is included.
 
 ---
 

@@ -35,14 +35,23 @@
 
 ## 1. What this is
 
-A **static marketing website** for **ecommsyte**, a full-service Amazon growth agency.
-Tagline: *"Strategy-Driven Amazon Growth."*
+A **marketing website** for **ecommsyte**, a full-service Amazon growth agency, served by a
+modular **Flask** app. Tagline: *"Strategy-Driven Amazon Growth."*
 
-- **Stack:** Plain HTML + one CSS file + one JS file. **No framework, no build step, no
-  package manager, no dependencies.**
-- **Not a git repository.** No `package.json`, `node_modules`, `robots.txt`, or `sitemap.xml`.
-- **Run locally:** `python -m http.server 5599` (see [.claude/launch.json](.claude/launch.json)).
-- **Deploy:** Upload the static files to any host. Intended domain: `https://www.ecommsyte.com/`.
+- **Stack:** Hand-written HTML (`templates/`) + one CSS file + one JS file (`static/`) — no
+  CSS/JS framework, no build step. A **Flask** application (`ecommsyte/` package:
+  `create_app()` factory + `config.py` + blueprints `pages`/`ops` + `extensions`/`security`/
+  `errors`; entry points `wsgi.py` prod / `run.py` dev) renders the pages with
+  `render_template` and serves `static/` at the URL root. Jinja is tuned
+  (`newline_sequence="\r\n"`, `keep_trailing_newline`) so **every response is byte-for-byte
+  identical** to the source file — the UI/UX is unchanged. `tests/` proves this. Forms post to
+  Formspree client-side. No `package.json`/`node_modules`; no `robots.txt`/`sitemap.xml`.
+- **Under git:** remote `github.com/choudaryhussainali/ECOMMSYTE`, branch `main`. **GitHub
+  Pages was retired** when the site moved into `templates/`+`static/` (Pages can't run Flask) —
+  the `.github/workflows/static.yml` workflow was removed.
+- **Run locally:** `python run.py` (Flask dev, :5000). Tests: `pytest`.
+- **Deploy:** any Python host (Render / Railway / Fly.io / VPS) — `gunicorn wsgi:app`, `Procfile`
+  included. Intended domain: `https://www.ecommsyte.com/`.
 
 ---
 
@@ -50,33 +59,33 @@ Tagline: *"Strategy-Driven Amazon Growth."*
 
 ```
 WEB/
-├── index.html          Homepage (680 lines)
-├── services.html       Services + pricing plans (975 lines) — largest page
-├── about.html          Company story / team / timeline (370)
-├── testimonials.html   Reviews + results (302)
-├── blog.html           Article grid (image cards → posts) + newsletter
-├── blog-*.html         7 full article pages (~1000–1100 words each, Unsplash hero images)
-├── careers.html        Culture / roles / hiring process (396)
-├── contact.html        Booking + contact forms + FAQ (348)
-├── styles.css          Entire design system (1217) — single stylesheet
-├── script.js           All interactivity (474) — single file
-├── favicon.svg         Brand badge (dark rounded square + the "E" mark)
-├── assets/
-│   ├── brands/         20 REAL client-logo JPGs (trimmed, normalized to white "logo chips",
-│   │                   ~330px, 3–18 KB) for the homepage "trusted by" marquee. 1000×1000
-│   │                   source originals kept locally in brands/src/ (untracked, not committed).
-│   ├── team/           6 real headshot JPGs (abdul-moeed, shahzaib-rafiq, ali-husnain,
-│   │                   awais-ilyas, usman-mirza, farhan-mirza) — optimized ~600×720, 44–51 KB.
-│   │                   Source originals kept locally in team/pics/ (untracked, not committed).
-├── README.md           Human-facing intro + run instructions
+├── templates/          All page HTML (rendered by Flask). index / services / about /
+│   │                   testimonials / blog / blog-*.html (7 posts) / careers / contact +
+│   │                   404.html. Byte-identical to what's served.
+├── static/             Served at the URL root (static_url_path="")
+│   ├── styles.css      Entire design system (~1220 lines) — single stylesheet
+│   ├── script.js       All interactivity — single file
+│   ├── favicon.svg     Brand badge (dark rounded square + the "E" mark)
+│   └── assets/
+│       ├── brands/     20 REAL client-logo JPGs (trimmed white "logo chips", ~330px, 3–18 KB)
+│       │               for the homepage marquee. 1000×1000 originals in brands/src/ (ignored).
+│       └── team/       6 real headshot JPGs (abdul-moeed, shahzaib-rafiq, ali-husnain,
+│                       awais-ilyas, usman-mirza, farhan-mirza) — ~600×720, 44–51 KB. 1000×720
+│                       originals in team/pics/ (ignored).
+├── ecommsyte/          Flask app package — create_app() factory · config.py · extensions.py ·
+│                       security.py · errors.py · blueprints/{pages,ops}.py
+├── wsgi.py  run.py     Production entry (gunicorn/waitress) · dev server
+├── tests/              pytest — test_routes.py (byte-identity + routes)
+├── instance/           Flask instance folder (contents git-ignored, .gitkeep tracked)
+├── requirements*.txt   runtime + dev (pytest) deps ; Procfile · .flaskenv · .env.example
+├── README.md           Human-facing intro + run/deploy instructions
 ├── CONTEXT.md          THIS FILE — project reference
 ├── Recording ...mp4    A screen recording; NOT referenced by the site (7.9 MB)
-└── .claude/
-    └── launch.json     VS Code dev-server config (python http.server, port 5599)
+└── .claude/            local tooling (git-ignored)
 ```
 
-Every page loads exactly two shared assets: `styles.css` and `script.js`. There is no
-per-page CSS/JS.
+Every page loads exactly two shared assets: `static/styles.css` and `static/script.js`
+(served at `/styles.css` and `/script.js`). There is no per-page CSS/JS.
 
 ---
 

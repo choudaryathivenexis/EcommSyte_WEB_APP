@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page not found &mdash; ecommsyte</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .nf { min-height: 100vh; display: grid; place-items: center; text-align: center;
+          padding: 2rem; background: var(--paper); }
+    .nf__eyebrow { font-family: var(--ff-head); font-weight: 800; letter-spacing: 0.18em;
+                   text-transform: uppercase; color: var(--muted); font-size: 0.8rem; }
+    .nf h1 { font-size: clamp(3rem, 12vw, 7rem); line-height: 1; margin: 0.4rem 0 0.6rem; }
+    .nf p { color: var(--muted); margin-bottom: 1.6rem; }
+  </style>
+</head>
+<body>
+  <main class="nf">
+    <div>
+      <span class="nf__eyebrow">Error 404</span>
+      <h1><span class="grad-text">Page not found</span></h1>
+      <p>That page doesn't exist &mdash; let's get you back on track.</p>
+      <a href="/" class="btn btn--primary magnetic">Back to home</a>
+    </div>
+  </main>
+  <script src="/script.js"></script>
+</body>
+</html>
