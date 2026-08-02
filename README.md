@@ -27,6 +27,24 @@ flask --app wsgi run                   # Flask CLI (reads .flaskenv / .env)
 pytest                                 # run the test suite (byte-identity + routes)
 ```
 
+### Deploy to Vercel
+
+The repo is Vercel-ready: [`api/index.py`](api/index.py) exposes the Flask app as a
+serverless function and [`vercel.json`](vercel.json) routes every request to it (with
+`templates/`, `static/`, and `ecommsyte/` bundled in). No source files are exposed.
+
+1. Push this repo to GitHub.
+2. On **vercel.com → Add New → Project**, import the repo. Vercel auto-detects the Python
+   function from `vercel.json` — leave the build settings as default and **Deploy**.
+3. (Optional but recommended) In **Project → Settings → Environment Variables** add
+   `SECRET_KEY` (any random string) and `APP_ENV=production`.
+4. That's it — the whole site (all pages + assets) is served by the function, identical to
+   local. The careers CMS keeps talking to Supabase from the browser.
+
+Or from the CLI: `npm i -g vercel` → `vercel` (preview) → `vercel --prod`.
+
+### Other hosts
+
 Deploy to any Python host (Render, Railway, Fly.io, a VPS…) — a `Procfile` is included.
 Config comes from the environment (`APP_ENV`, `SECRET_KEY`, `PORT`, `USE_PROXY_FIX`, …);
 see [.env.example](.env.example). Contact/booking forms post to Formspree client-side.

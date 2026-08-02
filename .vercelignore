@@ -1,0 +1,11 @@
+# Not needed in the Vercel deployment
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+.venv/
+venv/
+tests/
+instance/
+supabase/
+Recording 2026-07-09 155708.mp4

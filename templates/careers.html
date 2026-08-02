@@ -165,7 +165,7 @@
           <p class="section__sub">Don't see a perfect fit? We're always happy to meet exceptional people — send us your details anyway.</p>
         </header>
 
-        <div class="roles">
+        <div class="roles" id="rolesList">
           <article class="role reveal">
             <div>
               <div class="role__meta">
@@ -255,6 +255,48 @@
               <a href="contact.html#contact" class="btn btn--dark magnetic">Apply Now</a>
             </div>
           </article>
+        </div>
+
+        <p class="roles__empty" id="rolesEmpty" hidden>No open roles right now &mdash; but we're always happy to meet exceptional people. <a href="contact.html#contact">Send us your details</a>.</p>
+
+        <!-- ===== ROLES CMS (Supabase; admin-only, hidden until sign-in) ===== -->
+        <div class="cms" id="rolesCms" hidden>
+          <a href="#admin" class="cms__toggle" id="adminToggle">Admin</a>
+
+          <form class="cms__login" id="adminLogin" hidden autocomplete="on">
+            <input type="email" id="adminEmail" placeholder="Email" autocomplete="username" required />
+            <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" required />
+            <button type="submit" class="btn btn--dark btn--sm" id="adminLoginBtn">Sign in</button>
+            <p class="cms__error" id="adminLoginError" role="alert"></p>
+          </form>
+
+          <div class="cms__panel" id="adminPanel" hidden>
+            <div class="cms__panel-head">
+              <h3>Manage open roles</h3>
+              <button type="button" class="cms-btn" id="adminLogout">Log out</button>
+            </div>
+            <p class="cms__status" id="adminStatus" role="status" aria-live="polite"></p>
+
+            <form class="cms__form" id="roleForm">
+              <h4 id="roleFormTitle">Add role</h4>
+              <input type="text" id="roleTitle" placeholder="Role title" required />
+              <div class="cms__form-row">
+                <input type="text" id="roleDept" placeholder="Department (e.g. Advertising)" />
+                <input type="text" id="roleType" placeholder="Type (e.g. Full-time)" />
+                <input type="text" id="roleLocation" placeholder="Location (e.g. Remote)" />
+              </div>
+              <textarea id="roleDesc" placeholder="Description" rows="3"></textarea>
+              <input type="text" id="roleApplyUrl" placeholder="Apply URL (default: contact.html#contact)" />
+              <label class="cms__check"><input type="checkbox" id="roleVisible" checked /> Visible on the site</label>
+              <div class="cms__form-actions">
+                <button type="submit" class="btn btn--primary btn--sm" id="roleFormSubmit">Add role</button>
+                <button type="button" class="cms-btn" id="roleFormCancel" hidden>Cancel edit</button>
+              </div>
+            </form>
+
+            <ul class="cms__list" id="adminList"></ul>
+            <p class="cms__hint">Drag rows to reorder &mdash; the new order saves on drop.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -377,5 +419,8 @@
   </footer>
 
   <script src="script.js"></script>
+  <!-- Careers roles CMS — Supabase (serverless, browser-only) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="careers-cms.js"></script>
 </body>
 </html>

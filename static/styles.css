@@ -1960,3 +1960,48 @@ form.form--done { display: block; }
   .blogx__feature-media img, .blogx__thumb img, .blogx__go, .blogx__all-arrow { transition: none; }
 }
 
+/* =========================================================
+   CAREERS ROLES CMS (Supabase admin) — static/careers-cms.js
+   ========================================================= */
+.roles__empty { text-align: center; color: var(--muted); margin-top: 1.6rem; }
+
+.cms { margin-top: 2rem; }
+.cms__toggle { display: inline-block; font-family: var(--ff-head); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); opacity: 0.55; transition: opacity 0.2s, color 0.2s; }
+.cms__toggle:hover, .cms__toggle:focus-visible { opacity: 1; color: var(--orange-ink, var(--orange)); }
+
+.cms [hidden] { display: none !important; }   /* the [hidden] attr must win over the display rules below */
+.cms__login { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 1rem; max-width: 34rem; }
+.cms__login input { flex: 1 1 12rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; background: var(--white); font: inherit; color: var(--ink); }
+.cms__error { flex-basis: 100%; color: #b4231a; font-size: 0.85rem; margin: 0; }
+
+.cms__panel { margin-top: 1.4rem; padding: clamp(1.2rem, 3vw, 2rem); background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.cms__panel-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.3rem; }
+.cms__panel-head h3 { margin: 0; }
+.cms__status { min-height: 1.2em; font-size: 0.85rem; color: var(--muted); margin: 0 0 1rem; }
+
+.cms__form { display: grid; gap: 0.7rem; padding-bottom: 1.4rem; margin-bottom: 1.4rem; border-bottom: 1px solid var(--line); }
+.cms__form h4 { margin: 0; font-size: 1rem; }
+.cms__form input, .cms__form textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); font: inherit; color: var(--ink); }
+.cms__form textarea { resize: vertical; }
+.cms__form-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
+.cms__check { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--muted); }
+.cms__form-actions { display: flex; gap: 0.6rem; align-items: center; }
+
+.cms__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.cms-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.8rem; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; cursor: grab; }
+.cms-row.is-dragging { opacity: 0.45; cursor: grabbing; }
+.cms-row__handle { color: var(--mist); cursor: grab; }
+.cms-row__title { font-family: var(--ff-head); font-weight: 700; font-size: 0.92rem; color: var(--ink); }
+.cms-row__dept { color: var(--muted); font-size: 0.78rem; margin-right: auto; }
+.cms__hint { color: var(--muted); font-size: 0.78rem; margin: 0.9rem 0 0; }
+
+.cms-btn { font-family: var(--ff-head); font-weight: 700; font-size: 0.74rem; padding: 0.4rem 0.7rem; border: 1px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink); transition: border-color 0.2s, color 0.2s; }
+.cms-btn:hover { border-color: rgba(230,134,45,0.4); color: var(--orange-ink, var(--orange)); }
+.cms-btn--danger:hover { border-color: #d9534f; color: #b4231a; }
+.cms-btn--toggle[aria-pressed="false"] { color: var(--muted); }
+
+@media (max-width: 560px) {
+  .cms__form-row { grid-template-columns: 1fr; }
+  .cms-row { flex-wrap: wrap; }
+  .cms-row__dept { margin-right: 0; flex-basis: 100%; }
+}

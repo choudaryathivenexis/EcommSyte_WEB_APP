@@ -50,7 +50,9 @@ modular **Flask** app. Tagline: *"Strategy-Driven Amazon Growth."*
   Pages was retired** when the site moved into `templates/`+`static/` (Pages can't run Flask) —
   the `.github/workflows/static.yml` workflow was removed.
 - **Run locally:** `python run.py` (Flask dev, :5000). Tests: `pytest`.
-- **Deploy:** any Python host (Render / Railway / Fly.io / VPS) — `gunicorn wsgi:app`, `Procfile`
+- **Deploy:** **Vercel-ready** (`api/index.py` serverless function + `vercel.json` routes all
+  requests to it, with `templates`/`static`/`ecommsyte` bundled; no source exposed). Or any
+  Python host (Render / Railway / Fly.io / VPS) — `gunicorn wsgi:app`, `Procfile`
   included. Intended domain: `https://www.ecommsyte.com/`.
 
 ---
@@ -75,6 +77,7 @@ WEB/
 ├── ecommsyte/          Flask app package — create_app() factory · config.py · extensions.py ·
 │                       security.py · errors.py · blueprints/{pages,ops}.py
 ├── wsgi.py  run.py     Production entry (gunicorn/waitress) · dev server
+├── api/index.py        Vercel serverless entry (exposes the Flask app); + vercel.json, .vercelignore
 ├── tests/              pytest — test_routes.py (byte-identity + routes)
 ├── instance/           Flask instance folder (contents git-ignored, .gitkeep tracked)
 ├── requirements*.txt   runtime + dev (pytest) deps ; Procfile · .flaskenv · .env.example
@@ -251,7 +254,14 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
   **verified** `images.unsplash.com` photo IDs (checked HTTP 200 before use). Post styling is
   under the "BLOG — image cards + article (post) pages" block in styles.css.
 - **careers.html:** page-hero → culture (`#culture`, 6 value cards) → results →
-  open roles (`#roles`, 6 positions) → hiring process.
+  open roles (`#roles`) → hiring process. The **open-roles list is a serverless CMS**
+  (`static/careers-cms.js` + Supabase; schema in `supabase/careers_schema.sql`): public
+  reads `visible=true` rows ordered by `sort_order`; a hidden admin panel (revealed after
+  `signInWithPassword`, session persisted) does add/edit/delete + visibility toggle +
+  drag-reorder (upsert on drop). RLS is the security boundary (anon read-visible-only,
+  authenticated writes). **Until Supabase creds are filled into `careers-cms.js`, the 6
+  static fallback roles render unchanged** and the CMS stays hidden. `.cms-*` styles in
+  styles.css. Anon key is public by design; never ship the service_role key.
 - **contact.html:** page-hero → booking form (`#book` / `#bookingForm`) →
   contact info + quick message (`#contactForm`) → FAQ (`<details>`).
 
