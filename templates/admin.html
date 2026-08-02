@@ -70,7 +70,12 @@
             <input type="text" id="admType" placeholder="Type (e.g. Full-time)" />
             <input type="text" id="admLocation" placeholder="Location (e.g. Remote)" />
           </div>
-          <textarea id="admDesc" placeholder="Description" rows="3"></textarea>
+          <textarea id="admDesc" rows="8" placeholder="Job description — write a full, premium JD. Markdown supported: ## Heading, **bold**, *italic*, - bullet, 1. numbered, [link](url), &gt; quote."></textarea>
+          <div class="adm__jd-tools">
+            <span class="adm__jd-hint"><b>Markdown</b> supported — <code>## Heading</code>, <code>**bold**</code>, <code>*italic*</code>, <code>- bullet</code>, <code>1. list</code>, <code>[link](url)</code>, <code>&gt; quote</code>, <code>---</code>.</span>
+            <button type="button" class="adm-btn" id="admPreviewToggle" aria-pressed="false">Preview</button>
+          </div>
+          <div class="adm__preview role__jd" id="admPreview" hidden></div>
           <input type="text" id="admApplyUrl" placeholder="Apply URL (default: contact.html#contact)" />
           <label class="adm__check"><input type="checkbox" id="admVisible" checked /> Visible on the careers page</label>
           <div class="adm__form-actions">
@@ -92,6 +97,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="admin-cms.js?v=1"></script>
+  <script src="jd-markdown.js?v=1"></script>
+  <script src="admin-cms.js?v=2"></script>
 </body>
 </html>

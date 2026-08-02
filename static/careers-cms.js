@@ -132,21 +132,50 @@
   };
 
   /* ---- Public list (visible only, ordered by sort_order) -------------------- */
-  function roleCard(r) {
+  const md = window.JDMarkdown || null;
+  const jdHtml = (desc) => (md ? md.render(desc) : `<p>${esc(desc)}</p>`);
+  const jdText = (desc, n) =>
+    md ? md.excerpt(desc, n) : esc(String(desc || "").replace(/\s+/g, " ").trim().slice(0, n || 165));
+
+  function roleCard(r, idx) {
     const apply = esc(safeUrl(r.apply_url));
     const tags = [
       r.department ? `<span class="role__tag role__tag--dept">${esc(r.department)}</span>` : "",
       r.employment_type ? `<span class="role__tag">${esc(r.employment_type)}</span>` : "",
       r.location ? `<span class="role__tag">${esc(r.location)}</span>` : "",
     ].join("");
+
+    const desc = r.description || "";
+    const plainLen = jdText(desc, 100000).length;
+    const long = plainLen > 175;                 // long JDs get a summary + expand
+    const applyBtn = `<a href="${apply}" class="btn btn--dark magnetic">Apply Now</a>`;
+
+    let body, actions, detail;
+    if (long) {
+      const pid = "roleJd" + idx;
+      body = `<p class="role__excerpt">${esc(jdText(desc, 165))}</p>`;
+      actions =
+        `<button type="button" class="role__toggle" data-role-toggle aria-expanded="false" aria-controls="${pid}">` +
+        `<span data-toggle-label>View details</span></button>${applyBtn}`;
+      detail =
+        `<div class="role__detail"><div class="role__detail-inner">` +
+        `<div class="role__jd" id="${pid}">${jdHtml(desc)}</div>` +
+        `</div></div>`;
+    } else {
+      body = `<div class="role__jd role__jd--inline">${jdHtml(desc)}</div>`;
+      actions = applyBtn;
+      detail = "";
+    }
+
+    // No `reveal` class + inline opacity/transform: injected cards are ALWAYS
+    // visible, never dependent on the scroll-reveal observer having run.
     return (
-      // No `reveal` class + inline opacity/transform: injected cards are ALWAYS
-      // visible, never dependent on the scroll-reveal observer having run.
       `<article class="role" style="opacity:1;transform:none">` +
-      `<div><div class="role__meta">${tags}</div>` +
-      `<h3>${esc(r.title)}</h3><p>${esc(r.description)}</p></div>` +
-      `<div class="role__cta"><a href="${apply}" class="btn btn--dark magnetic">Apply Now</a></div>` +
-      `</article>`
+      `<div class="role__head">` +
+      `<div class="role__info"><div class="role__meta">${tags}</div>` +
+      `<h3>${esc(r.title)}</h3>${body}</div>` +
+      `<div class="role__actions">${actions}</div>` +
+      `</div>${detail}</article>`
     );
   }
 
@@ -156,6 +185,18 @@
       .sort((a, b) => a.sort_order - b.sort_order);
     el.list.innerHTML = visible.map(roleCard).join("");
     if (el.empty) el.empty.hidden = visible.length > 0;
+
+    // Wire expand/collapse for long JDs.
+    el.list.querySelectorAll("[data-role-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest(".role");
+        if (!card) return;
+        const open = card.classList.toggle("is-open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        const label = btn.querySelector("[data-toggle-label]");
+        if (label) label.textContent = open ? "Hide details" : "View details";
+      });
+    });
   }
 
   /* ---- Admin list (all rows, with controls + drag-reorder) ------------------ */

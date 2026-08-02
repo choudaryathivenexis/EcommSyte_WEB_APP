@@ -49,6 +49,8 @@
     list: $("admList"),
     empty: $("admEmpty"),
     status: $("admStatus"),
+    preview: $("admPreview"),
+    previewToggle: $("admPreviewToggle"),
   };
 
   const loginError = (msg) => { if (el.loginError) el.loginError.textContent = msg || ""; };
@@ -228,6 +230,25 @@
   }
 
   if (el.cancel) el.cancel.addEventListener("click", () => resetForm());
+
+  /* ---- Live Markdown preview ------------------------------------------------ */
+  function updatePreview() {
+    if (!el.preview || el.preview.hidden) return;
+    const src = val(el.fDesc);
+    el.preview.innerHTML = window.JDMarkdown
+      ? window.JDMarkdown.render(src)
+      : "<p>" + esc(src) + "</p>";
+  }
+  if (el.previewToggle && el.preview) {
+    el.previewToggle.addEventListener("click", () => {
+      const show = el.preview.hidden;
+      el.preview.hidden = !show;
+      el.previewToggle.setAttribute("aria-pressed", show ? "true" : "false");
+      el.previewToggle.textContent = show ? "Hide preview" : "Preview";
+      updatePreview();
+    });
+  }
+  if (el.fDesc) el.fDesc.addEventListener("input", updatePreview);
 
   if (el.form) {
     el.form.addEventListener("submit", async (e) => {
