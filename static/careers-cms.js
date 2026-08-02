@@ -21,6 +21,12 @@
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkdmluenR0bWtnYnlweGpzdmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NTgxNTAsImV4cCI6MjEwMTIzNDE1MH0.DvdGhpN_aK1daT61xZmsC6y1S5rcW0EKnJWwh_VuU30";
   const TABLE = "job_roles";
 
+  /* Secret ways to reveal the sign-in — there is NO visible admin link/text.
+     1) Deep-link: open the careers page with this hash → /careers#staff-login
+     2) Keyboard: press Ctrl/Cmd + Shift + K anywhere on the careers page.
+     Change ADMIN_HASH to whatever private value you like. */
+  const ADMIN_HASH = "#staff-login";
+
   const configured =
     !/YOUR-PROJECT-REF/.test(SUPABASE_URL) && !/YOUR_PUBLIC_ANON_KEY/.test(SUPABASE_ANON_KEY);
 
@@ -45,7 +51,6 @@
     list,
     empty: $("rolesEmpty"),
     cms: $("rolesCms"),
-    toggle: $("adminToggle"),
     login: $("adminLogin"),
     email: $("adminEmail"),
     password: $("adminPassword"),
@@ -167,9 +172,9 @@
   /* ---- Auth ----------------------------------------------------------------- */
   function reflectAuth(on) {
     isAdmin = on;
+    if (on && el.cms) el.cms.hidden = false; // reveal the shell only once signed in
     if (el.panel) el.panel.hidden = !on;
     if (el.login) el.login.hidden = on ? true : el.login.hidden;
-    if (el.toggle) el.toggle.hidden = on;
     if (on) renderAdmin();
   }
 
@@ -180,12 +185,25 @@
     db.auth.onAuthStateChange((_event, session) => reflectAuth(!!session));
   }
 
-  el.toggle &&
-    el.toggle.addEventListener("click", (e) => {
+  /* ---- Reveal the hidden sign-in (secret deep-link hash OR keyboard shortcut) -
+     No visible affordance exists on the page; a normal visitor can never find it. */
+  function revealLogin() {
+    if (isAdmin) return;
+    if (el.cms) el.cms.hidden = false;
+    if (el.login) el.login.hidden = false;
+    if (el.email) el.email.focus();
+  }
+  function checkHash() {
+    if (ADMIN_HASH && window.location.hash === ADMIN_HASH) revealLogin();
+  }
+  window.addEventListener("hashchange", checkHash);
+  window.addEventListener("keydown", (e) => {
+    if (isAdmin) return;
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "K" || e.key === "k")) {
       e.preventDefault();
-      if (el.login) el.login.hidden = !el.login.hidden;
-      if (!el.login.hidden && el.email) el.email.focus();
-    });
+      revealLogin();
+    }
+  });
 
   el.login &&
     el.login.addEventListener("submit", async (e) => {
@@ -341,7 +359,9 @@
   }
 
   /* ---- Boot ----------------------------------------------------------------- */
-  if (el.cms) el.cms.hidden = false;
+  // The CMS shell stays fully hidden — no visible admin link or login box. It is
+  // revealed only by the secret deep-link/shortcut above, or if already signed in.
   resetForm();
+  checkHash();
   initAuth().then(load);
 })();
