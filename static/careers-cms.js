@@ -21,13 +21,12 @@
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkdmluenR0bWtnYnlweGpzdmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NTgxNTAsImV4cCI6MjEwMTIzNDE1MH0.DvdGhpN_aK1daT61xZmsC6y1S5rcW0EKnJWwh_VuU30";
   const TABLE = "job_roles";
 
-  /* Secret ways to reveal the sign-in — there is NO visible admin link/text.
-     1) Deep-link (works everywhere, incl. mobile): open  /careers#staff-login
-     2) Type the secret word ADMIN_KEYWORD anywhere on the careers page.
-     A plain key-combo was avoided on purpose — browsers hijack combos like
-     Ctrl+Shift+K/J/I for devtools. Change either value to whatever you like. */
-  const ADMIN_HASH = "#staff-login";
-  const ADMIN_KEYWORD = "admin";
+  /* The careers page is now PUBLIC-ONLY — it just renders the visible roles.
+     All administration lives on the dedicated portal at  /admin  (admin.html).
+     These are left empty so the old on-page reveal stays disabled; set a hash
+     and/or keyword here if you ever want the in-page reveal back. */
+  const ADMIN_HASH = "";
+  const ADMIN_KEYWORD = "";
 
   const configured =
     !/YOUR-PROJECT-REF/.test(SUPABASE_URL) && !/YOUR_PUBLIC_ANON_KEY/.test(SUPABASE_ANON_KEY);

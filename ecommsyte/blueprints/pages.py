@@ -20,6 +20,7 @@ PAGES: dict[str, str] = {
     "/blog": "blog.html",
     "/careers": "careers.html",
     "/contact": "contact.html",
+    "/admin": "admin.html",
 }
 
 # Blog article slugs (each served at the URL root as well).

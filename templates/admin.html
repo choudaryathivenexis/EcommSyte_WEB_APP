@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1D1E20" />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <title>Admin — ecommsyte Careers CMS</title>
+  <meta name="description" content="ecommsyte careers CMS — authorized administrators only." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="adm" id="admRoot">
+    <header class="adm__bar">
+      <a class="adm__brand" href="/">ecomm<b>syte</b><em>Careers CMS</em></a>
+      <div class="adm__bar-actions" id="admBarActions" hidden>
+        <span class="adm__who" id="admWho"></span>
+        <button type="button" class="adm__logout" id="admLogout">Log out</button>
+      </div>
+    </header>
+
+    <!-- ===== SIGN-IN ===== -->
+    <div class="adm__login" id="admLogin">
+      <form class="adm__card" id="admLoginForm" autocomplete="on">
+        <h1>Admin sign&#8209;in</h1>
+        <p class="adm__lead">Manage the roles on your careers page. Authorized users only.</p>
+        <div class="adm__field">
+          <label for="admEmail">Email</label>
+          <input type="email" id="admEmail" autocomplete="username" required />
+        </div>
+        <div class="adm__field">
+          <label for="admPassword">Password</label>
+          <input type="password" id="admPassword" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn--primary" id="admLoginBtn" style="width:100%;min-height:50px">Sign in</button>
+        <p class="adm__error" id="admLoginError" role="alert"></p>
+      </form>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <main class="adm__main" id="admApp" hidden>
+      <div class="adm__head">
+        <div>
+          <h1>Open roles</h1>
+          <p>Add, edit, hide, and reorder the roles shown on your public careers page.</p>
+        </div>
+        <div class="adm__stats" aria-hidden="true">
+          <div class="adm__stat"><b id="admStatTotal">0</b><span>Total</span></div>
+          <div class="adm__stat adm__stat--on"><b id="admStatVisible">0</b><span>Visible</span></div>
+          <div class="adm__stat"><b id="admStatHidden">0</b><span>Hidden</span></div>
+        </div>
+      </div>
+
+      <section class="adm__panel">
+        <div class="adm__panel-title">
+          <h2 id="admFormTitle">Add a role</h2>
+          <button type="button" class="adm-btn" id="admFormCancel" hidden>Cancel edit</button>
+        </div>
+        <form class="adm__form" id="admRoleForm">
+          <input type="text" id="admTitle" placeholder="Role title (e.g. Senior Amazon PPC Manager)" required />
+          <div class="adm__row">
+            <input type="text" id="admDept" placeholder="Department (e.g. Advertising)" />
+            <input type="text" id="admType" placeholder="Type (e.g. Full-time)" />
+            <input type="text" id="admLocation" placeholder="Location (e.g. Remote)" />
+          </div>
+          <textarea id="admDesc" placeholder="Description" rows="3"></textarea>
+          <input type="text" id="admApplyUrl" placeholder="Apply URL (default: contact.html#contact)" />
+          <label class="adm__check"><input type="checkbox" id="admVisible" checked /> Visible on the careers page</label>
+          <div class="adm__form-actions">
+            <button type="submit" class="btn btn--primary" id="admSubmit">Add role</button>
+          </div>
+          <p class="adm__status" id="admStatus" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="adm__panel">
+        <div class="adm__panel-title">
+          <h2>Current roles</h2>
+        </div>
+        <ul class="adm__list" id="admList"></ul>
+        <p class="adm__empty" id="admEmpty" hidden>No roles yet &mdash; add your first one above.</p>
+        <p class="adm__hint">Drag rows to reorder &mdash; the new order saves on drop.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin-cms.js?v=1"></script>
+</body>
+</html>

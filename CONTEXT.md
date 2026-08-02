@@ -255,13 +255,18 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
   under the "BLOG — image cards + article (post) pages" block in styles.css.
 - **careers.html:** page-hero → culture (`#culture`, 6 value cards) → results →
   open roles (`#roles`) → hiring process. The **open-roles list is a serverless CMS**
-  (`static/careers-cms.js` + Supabase; schema in `supabase/careers_schema.sql`): public
-  reads `visible=true` rows ordered by `sort_order`; a hidden admin panel (revealed after
-  `signInWithPassword`, session persisted) does add/edit/delete + visibility toggle +
-  drag-reorder (upsert on drop). RLS is the security boundary (anon read-visible-only,
-  authenticated writes). **Until Supabase creds are filled into `careers-cms.js`, the 6
-  static fallback roles render unchanged** and the CMS stays hidden. `.cms-*` styles in
-  styles.css. Anon key is public by design; never ship the service_role key.
+  (`static/careers-cms.js` + Supabase; schema in `supabase/careers_schema.sql`): the
+  careers page is **public-only** — it just renders `visible=true` rows ordered by
+  `sort_order` (its in-page reveal is disabled: `ADMIN_HASH`/`ADMIN_KEYWORD` empty).
+  RLS is the security boundary (anon read-visible-only, authenticated writes).
+  **Until Supabase creds are filled in, the 6 static fallback roles render unchanged.**
+  `.cms-*` styles in styles.css. Anon key is public by design; never ship service_role.
+- **admin.html (`/admin`):** dedicated **premium standalone admin portal** for the careers
+  CMS (`static/admin-cms.js`, `.adm-*` styles). Auth-gated (Supabase `signInWithPassword`,
+  session persisted): sign-in screen → dashboard with stat chips, add/edit form, and a
+  roles list (visibility toggle, delete-with-confirm, drag-reorder via upsert-on-drop).
+  `noindex,nofollow`; not linked in nav. Same table/RLS as above; needs an admin user
+  created in Supabase Auth. All ops are try/caught and all DOM refs null-guarded.
 - **contact.html:** page-hero → booking form (`#book` / `#bookingForm`) →
   contact info + quick message (`#contactForm`) → FAQ (`<details>`).
 
