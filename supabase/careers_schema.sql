@@ -29,30 +29,33 @@ create index if not exists job_roles_visible_sort_idx
 -- ── Row Level Security ───────────────────────────────────────────────────────
 alter table public.job_roles enable row level security;
 
+-- Policy names are unquoted, space-free identifiers and there are NO string
+-- literals here, so the SQL editor's smart-quote conversion cannot corrupt them.
+
 -- READ — the public (anon) sees only visible rows; authenticated admins see all.
-drop policy if exists "public reads visible roles"    on public.job_roles;
-create policy "public reads visible roles"
+drop policy if exists public_read_visible on public.job_roles;
+create policy public_read_visible
   on public.job_roles for select to anon
   using (visible = true);
 
-drop policy if exists "authenticated reads all roles" on public.job_roles;
-create policy "authenticated reads all roles"
+drop policy if exists auth_read_all on public.job_roles;
+create policy auth_read_all
   on public.job_roles for select to authenticated
   using (true);
 
 -- WRITE — authenticated users only (insert / update / delete).
-drop policy if exists "authenticated inserts roles" on public.job_roles;
-create policy "authenticated inserts roles"
+drop policy if exists auth_insert on public.job_roles;
+create policy auth_insert
   on public.job_roles for insert to authenticated
   with check (true);
 
-drop policy if exists "authenticated updates roles" on public.job_roles;
-create policy "authenticated updates roles"
+drop policy if exists auth_update on public.job_roles;
+create policy auth_update
   on public.job_roles for update to authenticated
   using (true) with check (true);
 
-drop policy if exists "authenticated deletes roles" on public.job_roles;
-create policy "authenticated deletes roles"
+drop policy if exists auth_delete on public.job_roles;
+create policy auth_delete
   on public.job_roles for delete to authenticated
   using (true);
 

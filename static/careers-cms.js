@@ -22,10 +22,12 @@
   const TABLE = "job_roles";
 
   /* Secret ways to reveal the sign-in — there is NO visible admin link/text.
-     1) Deep-link: open the careers page with this hash → /careers#staff-login
-     2) Keyboard: press Ctrl/Cmd + Shift + K anywhere on the careers page.
-     Change ADMIN_HASH to whatever private value you like. */
+     1) Deep-link (works everywhere, incl. mobile): open  /careers#staff-login
+     2) Type the secret word ADMIN_KEYWORD anywhere on the careers page.
+     A plain key-combo was avoided on purpose — browsers hijack combos like
+     Ctrl+Shift+K/J/I for devtools. Change either value to whatever you like. */
   const ADMIN_HASH = "#staff-login";
+  const ADMIN_KEYWORD = "admin";
 
   const configured =
     !/YOUR-PROJECT-REF/.test(SUPABASE_URL) && !/YOUR_PUBLIC_ANON_KEY/.test(SUPABASE_ANON_KEY);
@@ -197,10 +199,16 @@
     if (ADMIN_HASH && window.location.hash === ADMIN_HASH) revealLogin();
   }
   window.addEventListener("hashchange", checkHash);
+  // Typed-passphrase reveal — never collides with any browser/devtools shortcut.
+  let keyBuffer = "";
   window.addEventListener("keydown", (e) => {
-    if (isAdmin) return;
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "K" || e.key === "k")) {
-      e.preventDefault();
+    if (isAdmin || !ADMIN_KEYWORD) return;
+    const t = e.target;
+    if (t && /^(input|textarea|select)$/i.test(t.tagName || "")) return; // ignore form typing
+    if (!e.key || e.key.length !== 1) return;
+    keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-ADMIN_KEYWORD.length);
+    if (keyBuffer === ADMIN_KEYWORD.toLowerCase()) {
+      keyBuffer = "";
       revealLogin();
     }
   });
