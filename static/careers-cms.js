@@ -36,6 +36,39 @@
   const list = $("rolesList");
   if (!list) return; // not the careers page
 
+  /* ---- Reveal the hidden sign-in ------------------------------------------
+     Wired FIRST — before the config/SDK checks below — so the deep-link and the
+     typed keyword ALWAYS work, even if the Supabase SDK is slow or blocked.
+     It also scrolls the sign-in into view, so you can't miss it. There is NO
+     visible admin affordance on the page. */
+  function revealLogin() {
+    const cms = $("rolesCms"), login = $("adminLogin"), email = $("adminEmail"), panel = $("adminPanel");
+    if (cms) cms.hidden = false;
+    if (panel && !panel.hidden) {               // already signed in — show the panel
+      try { panel.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (_) {}
+      return;
+    }
+    if (login) {
+      login.hidden = false;
+      try { login.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (_) {}
+    }
+    if (email) { try { email.focus({ preventScroll: true }); } catch (_) {} }
+  }
+  function checkHash() {
+    if (ADMIN_HASH && window.location.hash === ADMIN_HASH) revealLogin();
+  }
+  window.addEventListener("hashchange", checkHash);
+  let keyBuffer = "";
+  window.addEventListener("keydown", (e) => {
+    if (!ADMIN_KEYWORD) return;
+    const t = e.target;
+    if (t && /^(input|textarea|select)$/i.test(t.tagName || "")) return; // ignore field typing
+    if (!e.key || e.key.length !== 1) return;
+    keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-ADMIN_KEYWORD.length);
+    if (keyBuffer === ADMIN_KEYWORD.toLowerCase()) { keyBuffer = ""; revealLogin(); }
+  });
+  checkHash(); // honor a deep-link hash present on first load
+
   // Not configured yet → leave the static fallback roles as-is, hide the CMS.
   if (!configured) {
     console.info("[careers-cms] Supabase not configured — showing static fallback roles.");
@@ -189,31 +222,7 @@
     db.auth.onAuthStateChange((_event, session) => reflectAuth(!!session));
   }
 
-  /* ---- Reveal the hidden sign-in (secret deep-link hash OR keyboard shortcut) -
-     No visible affordance exists on the page; a normal visitor can never find it. */
-  function revealLogin() {
-    if (isAdmin) return;
-    if (el.cms) el.cms.hidden = false;
-    if (el.login) el.login.hidden = false;
-    if (el.email) el.email.focus();
-  }
-  function checkHash() {
-    if (ADMIN_HASH && window.location.hash === ADMIN_HASH) revealLogin();
-  }
-  window.addEventListener("hashchange", checkHash);
-  // Typed-passphrase reveal — never collides with any browser/devtools shortcut.
-  let keyBuffer = "";
-  window.addEventListener("keydown", (e) => {
-    if (isAdmin || !ADMIN_KEYWORD) return;
-    const t = e.target;
-    if (t && /^(input|textarea|select)$/i.test(t.tagName || "")) return; // ignore form typing
-    if (!e.key || e.key.length !== 1) return;
-    keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-ADMIN_KEYWORD.length);
-    if (keyBuffer === ADMIN_KEYWORD.toLowerCase()) {
-      keyBuffer = "";
-      revealLogin();
-    }
-  });
+  // (Sign-in reveal is wired at the top of this file so it works unconditionally.)
 
   el.login &&
     el.login.addEventListener("submit", async (e) => {
