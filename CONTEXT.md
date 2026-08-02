@@ -95,7 +95,11 @@ Every page loads exactly two shared assets: `static/styles.css` and `static/scri
 ## 3. Architecture & conventions
 
 ### Multi-page, no templating
-- Each page is a standalone `.html` file. Navigation is plain `<a href="page.html">` links.
+- Each page is a standalone template file. **All internal links use clean routes with no
+  `.html`** (`/`, `/about`, `/services#ppc`, `/blog-<slug>`, `/contact#book`) — including
+  canonical/OG URLs and social-share URLs. Flask still also serves the legacy `.html`
+  aliases, so old bookmarks keep working, but nothing in the site links to them. When adding
+  a link, use the clean route (`href="/about"`), never `about.html`.
 - **The `<header class="nav">` and `<footer class="footer">` markup is duplicated in
   every HTML file.** There is no include/template system.
   ⚠️ **A change to nav or footer must be repeated across all 7 pages.**

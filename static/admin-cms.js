@@ -74,8 +74,9 @@
 
   function safeUrl(u) {
     const v = String(u == null ? "" : u).trim();
-    if (!v) return "contact.html#contact";
-    if (/^(javascript|data|vbscript):/i.test(v)) return "contact.html#contact";
+    if (!v) return "/contact#contact";
+    if (/^(javascript|data|vbscript):/i.test(v)) return "/contact#contact";
+    if (v === "contact.html#contact" || v === "contact.html") return "/contact#contact"; // legacy stored default -> clean route
     return v;
   }
 
@@ -259,7 +260,7 @@
         employment_type: val(el.fType).trim() || "Full-time",
         location: val(el.fLocation).trim() || "Remote",
         description: val(el.fDesc).trim(),
-        apply_url: val(el.fApply).trim() || "contact.html#contact",
+        apply_url: val(el.fApply).trim() || "/contact#contact",
         visible: !!(el.fVisible && el.fVisible.checked),
       };
       if (!record.title) return setStatus("A role title is required.", true);

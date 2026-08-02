@@ -24,7 +24,7 @@
     if (!v) return "#";
     // Allow http(s), root/relative, anchors, mailto, tel — block javascript:, data:, etc.
     if (/^(https?:\/\/|\/|\.\/|#|mailto:|tel:)/i.test(v)) return v;
-    if (/^[\w./?=&%-]+$/.test(v)) return v; // bare relative path like contact.html#x
+    if (/^[\w./?=&%-]+$/.test(v)) return v; // bare relative path like /contact#x
     return "#";
   }
 

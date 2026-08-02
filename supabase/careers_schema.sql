@@ -17,7 +17,7 @@ create table if not exists public.job_roles (
   employment_type text        not null default 'Full-time',
   location        text        not null default 'Remote',
   description     text        not null default '',
-  apply_url       text        not null default 'contact.html#contact',
+  apply_url       text        not null default '/contact#contact',
   visible         boolean     not null default true,
   sort_order      integer     not null default 0,
   created_at      timestamptz not null default now()

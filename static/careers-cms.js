@@ -22,7 +22,7 @@
   const TABLE = "job_roles";
 
   /* The careers page is now PUBLIC-ONLY — it just renders the visible roles.
-     All administration lives on the dedicated portal at  /admin  (admin.html).
+     All administration lives on the dedicated portal at  /admin.
      These are left empty so the old on-page reveal stays disabled; set a hash
      and/or keyword here if you ever want the in-page reveal back. */
   const ADMIN_HASH = "";
@@ -120,8 +120,9 @@
 
   function safeUrl(u) {
     const v = String(u == null ? "" : u).trim();
-    if (!v) return "contact.html#contact";
-    if (/^(javascript|data|vbscript):/i.test(v)) return "contact.html#contact";
+    if (!v) return "/contact#contact";
+    if (/^(javascript|data|vbscript):/i.test(v)) return "/contact#contact";
+    if (v === "contact.html#contact" || v === "contact.html") return "/contact#contact"; // legacy stored default -> clean route
     return v;
   }
 
@@ -327,7 +328,7 @@
         employment_type: el.fType.value.trim() || "Full-time",
         location: el.fLocation.value.trim() || "Remote",
         description: el.fDesc.value.trim(),
-        apply_url: el.fApply.value.trim() || "contact.html#contact",
+        apply_url: el.fApply.value.trim() || "/contact#contact",
         visible: !!el.fVisible.checked,
       };
       if (!record.title) return setStatus("A role title is required.", true);
