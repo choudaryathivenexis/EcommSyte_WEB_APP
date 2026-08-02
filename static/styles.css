@@ -1206,23 +1206,41 @@ body.is-loading { overflow: hidden; }
 /* =========================================================
    CAREERS — open roles
    ========================================================= */
-.roles { display: grid; gap: 1.2rem; }
+.roles { display: grid; gap: 1.1rem; }
 .role {
-  display: grid; grid-template-columns: 1fr auto; gap: 1.2rem 2rem; align-items: center;
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2.4rem; align-items: center;
   background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.7rem 1.8rem; box-shadow: var(--shadow-sm);
-  transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
+  padding: 1.9rem 2rem 1.9rem 2.2rem;
+  box-shadow: 0 1px 2px rgba(29,30,32,0.04), 0 14px 34px -20px rgba(29,30,32,0.28);
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s var(--ease);
 }
-.role:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: rgba(230,134,45,0.3); }
-.role h3 { font-size: 1.2rem; margin-bottom: 0.7rem; }
-.role p { color: var(--muted); font-size: 0.92rem; max-width: 46rem; margin-top: 0.7rem; }
-.role__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.role__tag { font-family: var(--ff-head); font-weight: 600; font-size: 0.74rem; color: var(--ink); background: var(--cream); border: 1px solid var(--line); padding: 0.3rem 0.75rem; border-radius: 999px; }
-.role__tag--dept { color: var(--orange); background: rgba(230,134,45,0.1); border-color: rgba(230,134,45,0.25); }
+/* Brand accent bar that grows in on hover */
+.role::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--grad-warm); border-radius: var(--radius) 0 0 var(--radius);
+  transform: scaleY(0); transform-origin: top; transition: transform 0.45s var(--ease);
+}
+.role:hover {
+  transform: translateY(-5px); border-color: rgba(230,134,45,0.35);
+  box-shadow: 0 2px 4px rgba(29,30,32,0.05), 0 28px 54px -24px rgba(230,134,45,0.4);
+}
+.role:hover::before { transform: scaleY(1); }
+.role h3 { font-size: 1.32rem; letter-spacing: -0.015em; margin: 0.85rem 0 0; }
+.role p { color: var(--muted); font-size: 0.94rem; line-height: 1.62; max-width: 46rem; margin-top: 0.6rem; }
+.role__meta { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.role__tag {
+  font-family: var(--ff-head); font-weight: 600; font-size: 0.68rem;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--muted); background: var(--cream); border: 1px solid var(--line);
+  padding: 0.34rem 0.75rem; border-radius: 999px;
+}
+.role__tag--dept { color: var(--orange-ink); background: rgba(230,134,45,0.1); border-color: rgba(230,134,45,0.22); }
 .role__cta { display: flex; align-items: center; }
+.role__cta .btn { white-space: nowrap; }
 
 @media (max-width: 640px) {
-  .role { grid-template-columns: 1fr; }
+  .role { grid-template-columns: 1fr; padding: 1.6rem 1.5rem 1.6rem 1.7rem; }
   .role__cta .btn { width: 100%; }
 }
 
@@ -1970,38 +1988,67 @@ form.form--done { display: block; }
 .cms__toggle:hover, .cms__toggle:focus-visible { opacity: 1; color: var(--orange-ink, var(--orange)); }
 
 .cms [hidden] { display: none !important; }   /* the [hidden] attr must win over the display rules below */
-.cms__login { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 1rem; max-width: 34rem; }
-.cms__login input { flex: 1 1 12rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; background: var(--white); font: inherit; color: var(--ink); }
-.cms__error { flex-basis: 100%; color: #b4231a; font-size: 0.85rem; margin: 0; }
 
-.cms__panel { margin-top: 1.4rem; padding: clamp(1.2rem, 3vw, 2rem); background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
-.cms__panel-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.3rem; }
-.cms__panel-head h3 { margin: 0; }
-.cms__status { min-height: 1.2em; font-size: 0.85rem; color: var(--muted); margin: 0 0 1rem; }
+/* ---- Sign-in card (centered, all controls same height) ---- */
+.cms__login {
+  display: grid; gap: 0.7rem; margin: 1rem auto 0; max-width: 24rem;
+  padding: clamp(1.4rem, 3vw, 1.8rem);
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: 0 22px 54px -32px rgba(29,30,32,0.5);
+}
+.cms__login input {
+  width: 100%; min-height: 48px; padding: 0.8rem 0.95rem;
+  border: 1px solid var(--line); border-radius: 11px; background: var(--paper);
+  font: inherit; color: var(--ink); transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cms__login input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,134,45,0.15); }
+.cms__login .btn { width: 100%; min-height: 48px; }
+.cms__error { color: #b4231a; font-size: 0.85rem; margin: 0; }
 
-.cms__form { display: grid; gap: 0.7rem; padding-bottom: 1.4rem; margin-bottom: 1.4rem; border-bottom: 1px solid var(--line); }
-.cms__form h4 { margin: 0; font-size: 1rem; }
-.cms__form input, .cms__form textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); font: inherit; color: var(--ink); }
-.cms__form textarea { resize: vertical; }
+/* ---- Panel shell ---- */
+.cms__panel { margin-top: 1.4rem; padding: clamp(1.4rem, 3.2vw, 2.2rem); background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 26px 64px -36px rgba(29,30,32,0.5); }
+.cms__panel-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.1rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--line); }
+.cms__panel-head h3 { margin: 0; font-size: 1.18rem; }
+.cms__status { min-height: 1.2em; font-size: 0.85rem; font-weight: 600; color: var(--orange-ink); margin: 0 0 1.2rem; }
+
+/* ---- Add / edit form (inset card, uniform fields) ---- */
+.cms__form { display: grid; gap: 0.85rem; padding: clamp(1.1rem, 2.5vw, 1.5rem); margin-bottom: 1.6rem; background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.cms__form h4 { margin: 0; font-family: var(--ff-head); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.cms__form input, .cms__form textarea {
+  width: 100%; min-height: 48px; padding: 0.75rem 0.95rem;
+  border: 1px solid var(--line); border-radius: 11px; background: var(--white);
+  font: inherit; color: var(--ink); transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cms__form input:focus, .cms__form textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(230,134,45,0.15); }
+.cms__form textarea { min-height: 92px; resize: vertical; line-height: 1.5; }
 .cms__form-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
-.cms__check { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--muted); }
-.cms__form-actions { display: flex; gap: 0.6rem; align-items: center; }
+.cms__check { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; font-weight: 500; color: var(--ink); cursor: pointer; user-select: none; }
+/* Reset the checkbox so it doesn't inherit the full-width text-input styling */
+.cms__check input[type="checkbox"] { flex: none; width: 1.15rem; height: 1.15rem; min-height: 0; margin: 0; padding: 0; border: 0; background: none; accent-color: var(--orange); cursor: pointer; }
+.cms__form-actions { display: flex; gap: 0.6rem; align-items: center; margin-top: 0.2rem; }
 
-.cms__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
-.cms-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.8rem; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; cursor: grab; }
-.cms-row.is-dragging { opacity: 0.45; cursor: grabbing; }
-.cms-row__handle { color: var(--mist); cursor: grab; }
+/* ---- Roles list (drag to reorder) ---- */
+.cms__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+.cms-row { display: flex; align-items: center; gap: 0.85rem; padding: 0.8rem 0.95rem; background: var(--white); border: 1px solid var(--line); border-radius: 11px; cursor: grab; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+.cms-row:hover { border-color: rgba(230,134,45,0.3); box-shadow: var(--shadow-sm); }
+.cms-row.is-dragging { opacity: 0.5; cursor: grabbing; box-shadow: var(--shadow-md); }
+.cms-row__handle { flex: none; color: var(--mist); cursor: grab; font-size: 1.05rem; line-height: 1; }
 .cms-row__title { font-family: var(--ff-head); font-weight: 700; font-size: 0.92rem; color: var(--ink); }
-.cms-row__dept { color: var(--muted); font-size: 0.78rem; margin-right: auto; }
-.cms__hint { color: var(--muted); font-size: 0.78rem; margin: 0.9rem 0 0; }
+.cms-row__dept { margin-right: auto; color: var(--muted); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.cms__hint { color: var(--muted); font-size: 0.78rem; margin: 1.1rem 0 0; text-align: center; }
 
-.cms-btn { font-family: var(--ff-head); font-weight: 700; font-size: 0.74rem; padding: 0.4rem 0.7rem; border: 1px solid var(--line); border-radius: 8px; background: var(--white); color: var(--ink); transition: border-color 0.2s, color 0.2s; }
+/* ---- Buttons (equal height, toggle keeps a fixed width so rows don't jump) ---- */
+.cms-btn { display: inline-flex; align-items: center; justify-content: center; flex: none; font-family: var(--ff-head); font-weight: 700; font-size: 0.74rem; min-height: 36px; padding: 0.4rem 0.85rem; border: 1px solid var(--line); border-radius: 9px; background: var(--white); color: var(--ink); cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s; }
 .cms-btn:hover { border-color: rgba(230,134,45,0.4); color: var(--orange-ink, var(--orange)); }
-.cms-btn--danger:hover { border-color: #d9534f; color: #b4231a; }
+.cms-btn--danger:hover { border-color: #d9534f; color: #b4231a; background: rgba(217,83,79,0.06); }
+.cms-btn--toggle { min-width: 78px; }
+.cms-btn--toggle[aria-pressed="true"] { color: var(--orange-ink); border-color: rgba(230,134,45,0.32); background: rgba(230,134,45,0.09); }
 .cms-btn--toggle[aria-pressed="false"] { color: var(--muted); }
 
 @media (max-width: 560px) {
   .cms__form-row { grid-template-columns: 1fr; }
   .cms-row { flex-wrap: wrap; }
+  .cms-row__title { flex: 1 1 auto; }
   .cms-row__dept { margin-right: 0; flex-basis: 100%; }
+  .cms-row .cms-btn { flex: 1 1 auto; }
 }
