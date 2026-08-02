@@ -108,7 +108,9 @@
       r.location ? `<span class="role__tag">${esc(r.location)}</span>` : "",
     ].join("");
     return (
-      `<article class="role reveal is-in">` +
+      // No `reveal` class + inline opacity/transform: injected cards are ALWAYS
+      // visible, never dependent on the scroll-reveal observer having run.
+      `<article class="role" style="opacity:1;transform:none">` +
       `<div><div class="role__meta">${tags}</div>` +
       `<h3>${esc(r.title)}</h3><p>${esc(r.description)}</p></div>` +
       `<div class="role__cta"><a href="${apply}" class="btn btn--dark magnetic">Apply Now</a></div>` +
