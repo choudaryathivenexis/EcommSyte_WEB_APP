@@ -2198,7 +2198,7 @@ form.form--done { display: block; }
    A branded gradient sits behind the image, so the panel looks intentional even
    before the photo is added (no broken-image state).
    ============================================================================= */
-.showcase { background: var(--cream); }
+.showcase { background: var(--white); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .showcase__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
 .showcase__copy .eyebrow { margin-bottom: 0.9rem; }
 .showcase__lead { color: var(--muted); font-size: 1.05rem; line-height: 1.66; margin: 1.1rem 0 1.7rem; max-width: 34rem; }
