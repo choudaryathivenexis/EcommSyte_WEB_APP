@@ -2194,7 +2194,7 @@ form.form--done { display: block; }
 
 /* =============================================================================
    Showcase — "Global e-commerce acceleration" command-center section (home)
-   Image lives at:  static/assets/showcase/command-center.jpg
+   Image lives at:  static/assets/showcase/command-center.jpeg
    A branded gradient sits behind the image, so the panel looks intentional even
    before the photo is added (no broken-image state).
    ============================================================================= */
@@ -2216,7 +2216,7 @@ form.form--done { display: block; }
 .showcase__media {
   aspect-ratio: 4 / 3; border-radius: clamp(16px, 2vw, 24px);
   background:
-    url("assets/showcase/command-center.jpg") center / cover no-repeat,
+    url("assets/showcase/command-center.jpeg") center / cover no-repeat,
     linear-gradient(150deg, #35383e, var(--ink) 82%);
   border: 1px solid rgba(29,30,32,0.12);
   box-shadow: 0 2px 4px rgba(29,30,32,0.06), 0 42px 84px -42px rgba(29,30,32,0.6);
