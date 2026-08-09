@@ -1970,13 +1970,15 @@ form.form--done { display: block; }
 .blogx__link::after { content: ""; position: absolute; inset: 0; z-index: 3; }
 
 /* --- Featured (full-width split) --------------------------- */
-.blogx__feature { position: relative; display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr); align-items: stretch; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: clamp(1.2rem, 2.4vw, 1.8rem); box-shadow: 0 1px 2px rgba(29,30,32,0.04), 0 20px 44px -26px rgba(29,30,32,0.32); transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), opacity 0.55s var(--ease); }
-.blogx__feature-media { position: relative; min-height: 100%; aspect-ratio: 16 / 10; overflow: hidden; }
+/* Padded shell: the image is INSET with its own radius, so a real gutter of
+   whitespace separates it from the copy — nothing touches, nothing crowds. */
+.blogx__feature { position: relative; display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr); align-items: center; column-gap: clamp(1.8rem, 3.6vw, 3.4rem); background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(0.9rem, 1.5vw, 1.35rem); margin-bottom: clamp(1.2rem, 2.4vw, 1.8rem); box-shadow: 0 1px 2px rgba(29,30,32,0.04), 0 20px 44px -26px rgba(29,30,32,0.32); transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), opacity 0.55s var(--ease); }
+.blogx__feature-media { position: relative; aspect-ratio: 16 / 11; overflow: hidden; border-radius: calc(var(--radius) - 8px); background: var(--cream); }
 .blogx__feature-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
-.blogx__feature-body { display: flex; flex-direction: column; align-items: flex-start; gap: 0.9rem; justify-content: center; padding: clamp(1.6rem, 3.2vw, 2.8rem); }
-.blogx__feature-title { font-family: var(--ff-head); font-weight: 800; color: var(--ink); font-size: clamp(1.4rem, 2.2vw, 2rem); line-height: 1.16; letter-spacing: -0.02em; margin: 0; transition: color 0.3s var(--ease); }
-.blogx__excerpt { color: var(--muted); font-size: 0.97rem; line-height: 1.65; margin: 0; max-width: 44ch; }
-.blogx__cue { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem; font-family: var(--ff-head); font-weight: 700; font-size: 0.88rem; color: var(--orange-ink); }
+.blogx__feature-body { display: flex; flex-direction: column; align-items: flex-start; gap: 1.15rem; justify-content: center; padding: clamp(1.2rem, 2.4vw, 2rem) clamp(1rem, 2.2vw, 2rem) clamp(1.2rem, 2.4vw, 2rem) 0; }
+.blogx__feature-title { font-family: var(--ff-head); font-weight: 800; color: var(--ink); font-size: clamp(1.38rem, 2.05vw, 1.85rem); line-height: 1.24; letter-spacing: -0.02em; margin: 0; transition: color 0.3s var(--ease); }
+.blogx__excerpt { color: var(--muted); font-size: 0.97rem; line-height: 1.7; margin: 0; max-width: 42ch; }
+.blogx__cue { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem; font-family: var(--ff-head); font-weight: 700; font-size: 0.88rem; color: var(--orange-ink); }
 .blogx__cue-arrow { transition: transform 0.3s var(--ease); }
 
 /* --- 3-up card row ----------------------------------------- */
@@ -2000,8 +2002,10 @@ form.form--done { display: block; }
 
 /* --- Responsive --------------------------------------------- */
 @media (max-width: 1023px) {
-  .blogx__feature { grid-template-columns: minmax(0, 1fr); }
+  .blogx__feature { grid-template-columns: minmax(0, 1fr); row-gap: 0.35rem; }
   .blogx__feature-media { aspect-ratio: 16 / 9; }
+  /* stacked: the copy needs its left inset back, since there's no side gutter */
+  .blogx__feature-body { padding: clamp(1rem, 3vw, 1.5rem) clamp(0.6rem, 2vw, 1rem) clamp(0.6rem, 2vw, 1rem); }
   .blogx__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
