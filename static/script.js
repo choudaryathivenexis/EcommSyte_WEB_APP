@@ -838,3 +838,45 @@
   items.forEach(function (el) { io.observe(el); });
 })();
 
+
+/* =========================================================
+   HERO TYPEWRITER
+   Cycles the headline's accent phrase with a blinking caret.
+   Humanised cadence (slight per-keystroke jitter), pauses on the
+   finished phrase, then backspaces. Fully skipped when the user
+   prefers reduced motion — the first phrase simply stays put.
+   ========================================================= */
+(function () {
+  "use strict";
+  var wrap = document.querySelector(".hero__type");
+  if (!wrap) return;
+  var out = wrap.querySelector(".hero__type-out");
+  var words = (wrap.getAttribute("data-words") || "").split("|").filter(Boolean);
+  if (!out || words.length < 2) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var TYPE = 62, DEL = 30, HOLD = 2000, GAP = 420, START = 2400;
+  var i = 0, j = words[0].length, deleting = true, timer = null;
+
+  function tick() {
+    var word = words[i];
+    if (deleting) {
+      j--;
+      if (j <= 0) { deleting = false; i = (i + 1) % words.length; out.textContent = ""; timer = setTimeout(tick, GAP); return; }
+    } else {
+      j++;
+      if (j >= word.length) { out.textContent = word; deleting = true; timer = setTimeout(tick, HOLD); return; }
+    }
+    out.textContent = word.slice(0, j);
+    timer = setTimeout(tick, deleting ? DEL : TYPE + Math.random() * 55);
+  }
+
+  wrap.classList.add("is-typing");
+  timer = setTimeout(tick, START);
+
+  // Pause while the tab is hidden so it never runs a burst on return.
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { clearTimeout(timer); }
+    else { clearTimeout(timer); timer = setTimeout(tick, GAP); }
+  });
+})();

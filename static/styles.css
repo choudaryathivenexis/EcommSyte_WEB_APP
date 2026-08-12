@@ -217,7 +217,10 @@ body.is-loading { overflow: hidden; }
 .brand__word b { color: var(--orange); font-weight: 800; }
 .brand__text small { font-family: var(--ff-body); font-weight: 500; font-size: 0.82rem; color: var(--muted); letter-spacing: 0.06em; }
 
-.nav__links { display: flex; align-items: center; gap: 0.1rem; }
+/* Two-part menu: word links sit beside the brand, icon links + CTA hug the right */
+.nav__links { display: flex; align-items: center; flex: 1 1 auto; justify-content: flex-end; gap: 0.6rem; margin-left: clamp(1rem, 3.5vw, 3rem); }
+.nav__set { display: flex; align-items: center; gap: 0.1rem; }
+.nav__set--text { margin-right: auto; gap: 0.2rem; }
 .nav__link {
   display: inline-flex; align-items: center; gap: 0;
   font-family: var(--ff-head); font-weight: 600; font-size: 0.9rem; color: var(--ink);
@@ -249,8 +252,30 @@ body.is-loading { overflow: hidden; }
 .nav__link:hover .nav__label, .nav__link:focus-visible .nav__label, .nav__link.is-active .nav__label {
   max-width: 12ch; opacity: 1; margin-left: 0.45rem;
 }
+/* --- Word links (Home / Services / About): text always shown, refined underline
+   instead of the gradient pill, so the two menu styles never compete. --------- */
+.nav__link--text { padding: 0.5rem 0.15rem; font-size: 0.94rem; letter-spacing: -0.005em; overflow: visible; }
+.nav__link--text .nav__ico { display: none; }
+.nav__link--text .nav__label { max-width: none; opacity: 1; overflow: visible; margin-left: 0; }
+.nav__link--text::before { display: none; }               /* no shine sweep */
+.nav__link--text::after {
+  content: ""; position: absolute; left: 0.15rem; right: 0.15rem; bottom: 0.14rem; height: 2px;
+  background: var(--grad-warm); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left; transition: transform 0.38s var(--ease);
+}
+.nav__link--text:hover, .nav__link--text:focus-visible, .nav__link--text.is-active {
+  background: none; box-shadow: none; transform: none; color: var(--orange-ink);
+}
+.nav__link--text:hover::after, .nav__link--text:focus-visible::after, .nav__link--text.is-active::after { transform: scaleX(1); }
+/* over the dark hero the word links stay light, warming to brand orange */
+.nav:not(.scrolled) .nav__link--text:hover,
+.nav:not(.scrolled) .nav__link--text:focus-visible,
+.nav:not(.scrolled) .nav__link--text.is-active { color: var(--orange); }
+
 @media (max-width: 1040px) and (min-width: 761px) {
   .nav__link { padding: 0.5rem 0.55rem; font-size: 0.84rem; }
+  .nav__link--text { padding: 0.5rem 0.15rem; font-size: 0.88rem; }
+  .nav__links { gap: 0.4rem; margin-left: 1rem; }
   .nav__cta { margin-left: 0.2rem; }
 }
 .nav__cta { margin-left: 0.4rem; }
@@ -298,6 +323,18 @@ body.is-loading { overflow: hidden; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230,134,45,0.6);} 70%{box-shadow:0 0 0 10px rgba(230,134,45,0);} 100%{box-shadow:0 0 0 0 rgba(230,134,45,0);} }
 
 .hero__title { color: var(--white); font-size: clamp(2.3rem, 5.4vw, 4rem); font-weight: 800; margin: 1.1rem 0 1.1rem; }
+/* Typewriter headline — JS adds .is-typing; without it the first phrase just sits there */
+.hero__type { display: inline; white-space: nowrap; }
+.hero__caret {
+  display: inline-block; width: 3px; height: 0.86em; margin-left: 0.07em; vertical-align: -0.06em;
+  border-radius: 2px; background: var(--orange); opacity: 0;
+  box-shadow: 0 0 14px rgba(230,134,45,0.75);
+}
+.hero__type.is-typing .hero__caret { opacity: 1; animation: heroCaret 1.05s steps(1, end) infinite; }
+@keyframes heroCaret { 0%, 48% { opacity: 1; } 52%, 96% { opacity: 0; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero__caret { display: none; }
+}
 .hero__lead { color: rgba(255, 255, 255, 0.78); font-size: clamp(1rem, 1.4vw, 1.16rem); max-width: 34rem; }
 .hero__lead strong { color: var(--white); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 1.8rem 0 2rem; }
@@ -1535,8 +1572,15 @@ body.is-loading { overflow: hidden; }
   .nav:not(.scrolled) .nav__link { color: var(--ink); }
   .nav__link.is-active,
   .nav:not(.scrolled) .nav__link.is-active { color: var(--orange); }
+  /* drawer: dissolve the desktop groups so every link flows in one column */
+  .nav__set { display: contents; }
   .nav__link { padding: 0.9rem 1rem; border-radius: 12px; font-size: 1.05rem; overflow: visible; }
   .nav__link::before { display: none; }
+  /* word links behave like the rest inside the drawer (icon back, no underline) */
+  .nav__link--text { padding: 0.9rem 1rem; font-size: 1.05rem; }
+  .nav__link--text .nav__ico { display: block; }
+  .nav__link--text::after { display: none; }
+  .nav__link--text:hover, .nav__link--text:focus-visible, .nav__link--text.is-active { background: rgba(230,134,45,0.1); color: var(--orange); }
   /* Drawer: icon + label always visible (never collapsed/clamped), calm treatment */
   .nav__label,
   .nav__link:hover .nav__label,
@@ -1888,13 +1932,13 @@ form.form--done { display: block; }
    SOCIAL SIDEBAR TRAY (site-wide, injected by JS)
    ========================================================= */
 .social-tray {
-  position: fixed; left: 0; top: 50%; transform: translateY(-50%) translateX(-110%);
+  position: fixed; right: 0; top: 50%; transform: translateY(-50%) translateX(110%);
   z-index: 95; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem;
-  padding: 0.5rem; border-radius: 0 16px 16px 0;
+  padding: 0.5rem; border-radius: 16px 0 0 16px;
   background: rgba(255, 255, 255, 0.72);
   -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid var(--line); border-left: none;
-  box-shadow: 10px 18px 44px rgba(29, 30, 32, 0.14);
+  border: 1px solid var(--line); border-right: none;
+  box-shadow: -10px 18px 44px rgba(29, 30, 32, 0.14);
   opacity: 0; animation: trayIn 0.7s var(--ease) 0.6s forwards;
 }
 @keyframes trayIn { to { transform: translateY(-50%) translateX(0); opacity: 1; } }
@@ -1904,23 +1948,23 @@ form.form--done { display: block; }
   transition: color 0.25s, background 0.25s, transform 0.3s var(--ease);
 }
 .social-tray__link svg { width: 19px; height: 19px; fill: currentColor; transition: transform 0.3s var(--ease); }
-.social-tray__link:hover { color: #fff; background: var(--ink); transform: translateX(3px); }
+.social-tray__link:hover { color: #fff; background: var(--ink); transform: translateX(-3px); }
 .social-tray__link:hover svg { transform: scale(1.08); }
 .social-tray__link[data-brand="linkedin"]:hover { background: #0288D1; }
 .social-tray__link[data-brand="facebook"]:hover { background: #1877F2; }
 .social-tray__link[data-brand="whatsapp"]:hover { background: #2AB540; }
 .social-tray__link[data-brand="email"]:hover { background: var(--orange); color: var(--ink); }
 .social-tray__label {
-  position: absolute; left: calc(100% + 12px); top: 50%; white-space: nowrap;
+  position: absolute; right: calc(100% + 12px); top: 50%; white-space: nowrap;
   font-family: var(--ff-head); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.01em;
   color: #fff; background: var(--ink); padding: 0.42rem 0.72rem; border-radius: 9px;
-  opacity: 0; visibility: hidden; transform: translate(-8px, -50%);
+  opacity: 0; visibility: hidden; transform: translate(8px, -50%);
   transition: opacity 0.25s, transform 0.25s var(--ease); pointer-events: none;
   box-shadow: var(--shadow-md);
 }
 .social-tray__label::before {
-  content: ""; position: absolute; right: 100%; top: 50%; transform: translateY(-50%);
-  border: 6px solid transparent; border-right-color: var(--ink);
+  content: ""; position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-left-color: var(--ink);
 }
 .social-tray__link:hover .social-tray__label,
 .social-tray__link:focus-visible .social-tray__label { opacity: 1; visibility: visible; transform: translate(0, -50%); }
