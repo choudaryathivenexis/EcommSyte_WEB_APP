@@ -201,7 +201,11 @@ body.is-loading { overflow: hidden; }
 .nav:not(.scrolled) .brand__word { color: var(--white); }
 .nav:not(.scrolled) .brand__text small { color: rgba(255, 255, 255, 0.6); }
 .nav:not(.scrolled) .nav__toggle span { background: var(--white); }
+/* The header breaks out of the 1180px content column and spans the viewport, so
+   the brand and CTA sit near the screen edges. The gutter scales with the screen
+   (18px phone → 56px large desktop) to keep the breathing space optical, not fixed. */
 .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.nav .nav__inner { max-width: none; padding-inline: clamp(1.15rem, 3.2vw, 3.5rem); }
 
 .brand { display: flex; align-items: center; gap: 0.7rem; }
 .brand__mark {
@@ -220,7 +224,9 @@ body.is-loading { overflow: hidden; }
 /* Two-part menu: word links sit beside the brand, icon links + CTA hug the right */
 .nav__links { display: flex; align-items: center; flex: 1 1 auto; justify-content: flex-end; gap: 0.6rem; margin-left: clamp(1rem, 3.5vw, 3rem); }
 .nav__set { display: flex; align-items: center; gap: 0.1rem; }
-.nav__set--text { margin-right: auto; gap: clamp(1.1rem, 2.2vw, 2.1rem); }
+/* auto on both sides: the word links stay optically centred in the space between
+   the brand and the icon cluster, so a wide header never leaves a dead gap */
+.nav__set--text { margin-inline: auto; gap: clamp(1.1rem, 2.2vw, 2.1rem); }
 .nav__link {
   display: inline-flex; align-items: center; gap: 0;
   font-family: var(--ff-head); font-weight: 600; font-size: 0.9rem; color: var(--ink);
