@@ -880,3 +880,25 @@
     else { clearTimeout(timer); timer = setTimeout(tick, GAP); }
   });
 })();
+
+/* =========================================================
+   MEGA MENU — Escape to close
+   The panel opens purely in CSS (:hover / :focus-within), so the
+   only thing JS owes it is a keyboard escape hatch: blurring the
+   focused element inside releases :focus-within and it closes.
+   ========================================================= */
+(function () {
+  "use strict";
+  var wrap = document.querySelector(".nav__mega-wrap");
+  if (!wrap) return;
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" && e.key !== "Esc") return;
+    var active = document.activeElement;
+    if (active && wrap.contains(active) && typeof active.blur === "function") {
+      active.blur();
+      var link = wrap.querySelector(".nav__link");
+      if (link) link.focus({ preventScroll: true });
+      if (document.activeElement && wrap.contains(document.activeElement)) document.activeElement.blur();
+    }
+  });
+})();
