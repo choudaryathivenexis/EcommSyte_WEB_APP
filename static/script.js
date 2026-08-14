@@ -902,3 +902,67 @@
     }
   });
 })();
+
+/* =========================================================
+   SCROLL-TO-TOP — injected once, site-wide.
+   A brand-gradient disc wrapped in a live progress ring: the ring
+   traces how far down the page you are, so the control doubles as a
+   position indicator. Reveals past 400px, honours reduced motion.
+   ========================================================= */
+(function () {
+  "use strict";
+  if (document.querySelector(".to-top")) return;
+
+  var R = 21;                       // ring radius (matches the CSS circle)
+  var LEN = 2 * Math.PI * R;
+  var SHOW_AT = 400;
+
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "to-top";
+  btn.setAttribute("aria-label", "Back to top");
+  btn.innerHTML =
+    '<svg class="to-top__ring" viewBox="0 0 48 48" aria-hidden="true" focusable="false">' +
+      '<circle class="to-top__track" cx="24" cy="24" r="' + R + '"/>' +
+      '<circle class="to-top__bar" cx="24" cy="24" r="' + R + '" ' +
+        'stroke-dasharray="' + LEN.toFixed(2) + '" stroke-dashoffset="' + LEN.toFixed(2) + '"/>' +
+    '</svg>' +
+    '<svg class="to-top__arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M12 19V5"/><path d="m5.5 11.5 6.5-6.5 6.5 6.5"/>' +
+    '</svg>' +
+    '<span class="to-top__label">Top</span>';
+  document.body.appendChild(btn);
+
+  var bar = btn.querySelector(".to-top__bar");
+  var ticking = false;
+
+  function update() {
+    ticking = false;
+    var doc = document.documentElement;
+    var max = (doc.scrollHeight - window.innerHeight) || 1;
+    var y = window.pageYOffset || doc.scrollTop || 0;
+    var pct = Math.min(Math.max(y / max, 0), 1);
+    if (bar) bar.style.strokeDashoffset = (LEN * (1 - pct)).toFixed(2);
+    btn.classList.toggle("is-in", y > SHOW_AT);
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  update();
+
+  btn.addEventListener("click", function () {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    // Send focus somewhere sensible once we're back at the top.
+    var skip = document.querySelector(".skip-link") || document.querySelector("#page-top");
+    if (skip && typeof skip.focus === "function") {
+      window.setTimeout(function () { skip.focus({ preventScroll: true }); }, reduce ? 0 : 600);
+    }
+  });
+})();

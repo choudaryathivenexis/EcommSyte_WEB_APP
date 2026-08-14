@@ -2466,3 +2466,70 @@ form.form--done { display: block; }
 
 @media (max-width: 760px) { .nf__links-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 420px) { .nf__links-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* =============================================================================
+   SCROLL TO TOP — gradient disc inside a live scroll-progress ring
+   Injected by script.js on every page.
+   ============================================================================= */
+.to-top {
+  position: fixed; right: clamp(1rem, 2.2vw, 1.9rem); bottom: clamp(1rem, 2.2vw, 1.9rem); z-index: 90;
+  width: 54px; height: 54px; display: grid; place-items: center; padding: 0;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 2px 6px rgba(29,30,32,0.08), 0 18px 38px -14px rgba(29,30,32,0.45);
+  opacity: 0; visibility: hidden; transform: translateY(14px) scale(0.86);
+  transition: opacity 0.4s var(--ease), transform 0.5s var(--ease), visibility 0.4s,
+              box-shadow 0.35s var(--ease), background 0.3s;
+}
+.to-top.is-in { opacity: 1; visibility: visible; transform: none; }
+
+/* the disc that sits under the arrow */
+.to-top::before {
+  content: ""; position: absolute; inset: 5px; border-radius: 50%;
+  background: var(--grad-warm); opacity: 0; transform: scale(0.6);
+  transition: opacity 0.35s var(--ease), transform 0.45s var(--ease);
+}
+.to-top:hover, .to-top:focus-visible {
+  transform: translateY(-4px); background: rgba(255,255,255,0.9);
+  box-shadow: 0 2px 6px rgba(29,30,32,0.08), 0 24px 46px -14px rgba(230,134,45,0.6);
+}
+.to-top:hover::before, .to-top:focus-visible::before { opacity: 1; transform: scale(1); }
+.to-top:active { transform: translateY(-1px) scale(0.97); }
+
+/* progress ring */
+.to-top__ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
+.to-top__ring circle { fill: none; stroke-width: 2.5; }
+.to-top__track { stroke: rgba(29,30,32,0.12); }
+.to-top__bar { stroke: var(--orange); stroke-linecap: round; transition: stroke-dashoffset 0.15s linear; }
+
+.to-top__arrow {
+  position: relative; z-index: 2; width: 19px; height: 19px;
+  fill: none; stroke: var(--ink); stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round;
+  transition: transform 0.42s var(--ease), stroke 0.3s;
+}
+.to-top:hover .to-top__arrow, .to-top:focus-visible .to-top__arrow { transform: translateY(-2px); stroke: var(--ink); }
+
+/* label slides out on hover, desktop only */
+.to-top__label {
+  position: absolute; right: calc(100% + 10px); top: 50%; white-space: nowrap;
+  font-family: var(--ff-head); font-weight: 700; font-size: 0.76rem; color: var(--white);
+  background: var(--ink); padding: 0.4rem 0.7rem; border-radius: 9px; box-shadow: var(--shadow-md);
+  opacity: 0; visibility: hidden; transform: translate(8px, -50%); pointer-events: none;
+  transition: opacity 0.25s, transform 0.28s var(--ease), visibility 0.25s;
+}
+.to-top__label::after {
+  content: ""; position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+  border: 5px solid transparent; border-left-color: var(--ink);
+}
+.to-top:hover .to-top__label, .to-top:focus-visible .to-top__label { opacity: 1; visibility: visible; transform: translate(0, -50%); }
+
+@media (max-width: 640px) {
+  .to-top { width: 48px; height: 48px; }
+  .to-top__arrow { width: 17px; height: 17px; }
+  .to-top__label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .to-top, .to-top::before, .to-top__arrow, .to-top__label, .to-top__bar { transition: none; }
+  .to-top:hover, .to-top:focus-visible { transform: none; }
+}
