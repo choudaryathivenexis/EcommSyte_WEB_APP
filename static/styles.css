@@ -2397,8 +2397,9 @@ form.form--done { display: block; }
 .legal__h3 { font-family: var(--ff-head); font-weight: 700; font-size: 1rem; color: var(--ink); margin: 1.5rem 0 0.5rem; }
 .legal__body p { color: var(--muted); font-size: 0.97rem; line-height: 1.75; margin: 0 0 0.9rem; }
 .legal__body p:last-child { margin-bottom: 0; }
-.legal__body a { color: var(--orange-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-.legal__body a:hover { color: var(--orange); }
+/* :not(.btn) — inline prose links get the underline treatment, buttons must not */
+.legal__body a:not(.btn) { color: var(--orange-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.legal__body a:not(.btn):hover { color: var(--orange); }
 .legal__list { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.55rem; }
 .legal__list li { position: relative; padding-left: 1.5rem; color: var(--muted); font-size: 0.95rem; line-height: 1.65; }
 .legal__list li::before { content: ""; position: absolute; left: 0.28rem; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--grad-warm); }
@@ -2409,9 +2410,11 @@ form.form--done { display: block; }
 .legal__contact-eyebrow { font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); }
 .legal__contact-title { color: var(--white); font-size: clamp(1.35rem, 2.6vw, 1.8rem); margin: 0.5rem 0 0.6rem; }
 .legal__contact p { color: rgba(255,255,255,0.74) !important; max-width: 40ch; }
-.legal__contact-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.3rem; }
+.legal__contact-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.4rem; }
+.legal__contact .btn { text-decoration: none; }
+.legal__contact .btn--primary { color: var(--ink); }
 .legal__contact .btn--ghost { color: var(--white); border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); }
-.legal__contact .btn--ghost:hover { border-color: var(--orange); color: var(--orange); }
+.legal__contact .btn--ghost:hover { border-color: var(--orange); color: var(--orange); background: rgba(255,255,255,0.1); }
 
 @media (max-width: 900px) {
   .legal__grid { grid-template-columns: minmax(0, 1fr); }
