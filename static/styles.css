@@ -598,6 +598,9 @@ body.is-loading { overflow: hidden; }
   position: absolute; inset: 0; width: 100%; height: 100%;
   transition: transform 0.55s var(--ease);
 }
+/* Real banner artwork — fills the panel; the grid overlay + chip sit above it. */
+.scard__img { object-fit: cover; object-position: center; }
+.scard__banner:has(.scard__img)::before { opacity: 0.45; }   /* soften the grid over photography */
 .scard:hover .scard__art { transform: scale(1.05); }
 .scard__chip {
   position: relative; z-index: 2; display: grid; place-items: center;
