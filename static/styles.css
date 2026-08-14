@@ -2432,6 +2432,10 @@ form.form--done { display: block; }
    SCROLL TO TOP — gradient disc inside a live scroll-progress ring
    Injected by script.js on every page.
    ============================================================================= */
+/* the scroll-to-top control focuses the main landmark to reset tab order —
+   that's a programmatic focus, so it shouldn't paint a focus ring */
+main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
+
 .to-top {
   position: fixed; right: clamp(1rem, 2.2vw, 1.9rem); bottom: clamp(1rem, 2.2vw, 1.9rem); z-index: 90;
   width: 54px; height: 54px; display: grid; place-items: center; padding: 0;

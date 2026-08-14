@@ -812,7 +812,7 @@
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   });
-})();
+})();
 
 /* =========================================================
    FROM THE BLOG — scoped reveal (IntersectionObserver)
@@ -959,10 +959,21 @@
   btn.addEventListener("click", function () {
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-    // Send focus somewhere sensible once we're back at the top.
-    var skip = document.querySelector(".skip-link") || document.querySelector("#page-top");
-    if (skip && typeof skip.focus === "function") {
-      window.setTimeout(function () { skip.focus({ preventScroll: true }); }, reduce ? 0 : 600);
-    }
+    // Reset the tab order to the top of the document. Focus the main landmark —
+    // never the skip link, which is built to become visible when focused.
+    var target = document.getElementById("page-top") || document.querySelector("main");
+    if (!target || typeof target.focus !== "function") return;
+    window.setTimeout(function () {
+      var had = target.hasAttribute("tabindex");
+      if (!had) target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+      if (!had) {
+        // drop the temporary tabindex again so the DOM is left as we found it
+        target.addEventListener("blur", function once() {
+          target.removeAttribute("tabindex");
+          target.removeEventListener("blur", once);
+        });
+      }
+    }, reduce ? 0 : 600);
   });
 })();
