@@ -580,7 +580,8 @@ body.is-loading { overflow: hidden; }
 .scard__banner {
   position: relative; overflow: hidden;
   margin: -1.8rem -1.6rem 1.3rem;          /* full-bleed over the card padding */
-  height: 150px; display: flex; align-items: flex-end; padding: 0.85rem 0.95rem;
+  aspect-ratio: 16 / 9;                    /* landscape banner — scales with the card */
+  display: flex; align-items: flex-end; padding: 0.85rem 0.95rem;
   background:
     radial-gradient(150px 120px at 84% -20%, var(--banner-glow, rgba(230,134,45,0.55)), transparent 70%),
     linear-gradient(155deg, var(--ink-3), var(--ink) 82%);
