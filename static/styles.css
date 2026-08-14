@@ -1239,6 +1239,9 @@ body.is-loading { overflow: hidden; }
 .footer__contact a:hover { color: var(--amber); }
 .footer__bottom { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding-top: 1.6rem; font-size: 0.82rem; color: rgba(255,255,255,0.5); }
 .footer__bottom a:hover { color: var(--amber); }
+.footer__legal { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+.footer__legal a { position: relative; color: rgba(255,255,255,0.5); transition: color 0.25s; }
+.footer__legal a + a::before { content: ""; position: absolute; left: -0.72rem; top: 50%; transform: translateY(-50%); width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.28); }
 
 /* Developer watermark */
 .footer__credit { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.78rem; color: rgba(255,255,255,0.5); transition: color 0.25s; }
@@ -2362,3 +2365,97 @@ form.form--done { display: block; }
   .showcase__badge { left: 0.9rem; bottom: -0.9rem; padding: 0.8rem 1.1rem; }
   .showcase__badge-num { font-size: 1.5rem; }
 }
+
+/* =============================================================================
+   LEGAL PAGES — Privacy Policy / Terms of Service
+   Sticky table of contents beside a long-form, numbered document.
+   ============================================================================= */
+.page-hero--legal .page-hero__sub { max-width: 46rem; }
+.legal__stamp { display: inline-flex; align-items: center; gap: 0.55rem; margin-top: 1.4rem; font-family: var(--ff-body); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.62); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); padding: 0.5rem 1rem; border-radius: 999px; }
+.legal__stamp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 4px rgba(230,134,45,0.18); flex: none; }
+
+.legal { background: var(--paper); }
+.legal__grid { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+
+/* --- Sticky contents rail ---------------------------------------------- */
+.legal__aside { position: sticky; top: 6.5rem; }
+.legal__toc { padding: 1.4rem 1.2rem; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); max-height: calc(100vh - 9rem); overflow-y: auto; scrollbar-width: none; }
+.legal__toc::-webkit-scrollbar { width: 0; }
+.legal__toc-head { font-family: var(--ff-head); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.9rem 0.6rem; }
+.legal__toc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.1rem; }
+.legal__toc-list a { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.46rem 0.6rem; border-radius: 9px; font-size: 0.83rem; line-height: 1.35; color: var(--muted); transition: background 0.22s, color 0.22s; }
+.legal__toc-list a:hover, .legal__toc-list a:focus-visible { background: var(--cream); color: var(--orange-ink); }
+.legal__toc-num { flex: none; font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; font-variant-numeric: tabular-nums; color: var(--mist); }
+.legal__toc-list a:hover .legal__toc-num { color: var(--orange); }
+
+/* --- Document ----------------------------------------------------------- */
+.legal__body { min-width: 0; max-width: 46rem; }
+.legal__section { scroll-margin-top: 6.5rem; padding-bottom: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: clamp(1.8rem, 3.5vw, 2.6rem); border-bottom: 1px solid var(--line); }
+.legal__section:last-of-type { border-bottom: 0; }
+.legal__h2 { display: flex; align-items: baseline; gap: 0.85rem; font-size: clamp(1.25rem, 2.2vw, 1.55rem); line-height: 1.25; letter-spacing: -0.015em; margin: 0 0 1rem; }
+.legal__num { flex: none; font-family: var(--ff-head); font-weight: 800; font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--orange-ink); background: rgba(230,134,45,0.1); border: 1px solid rgba(230,134,45,0.22); padding: 0.3rem 0.55rem; border-radius: 8px; }
+.legal__h3 { font-family: var(--ff-head); font-weight: 700; font-size: 1rem; color: var(--ink); margin: 1.5rem 0 0.5rem; }
+.legal__body p { color: var(--muted); font-size: 0.97rem; line-height: 1.75; margin: 0 0 0.9rem; }
+.legal__body p:last-child { margin-bottom: 0; }
+.legal__body a { color: var(--orange-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.legal__body a:hover { color: var(--orange); }
+.legal__list { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.55rem; }
+.legal__list li { position: relative; padding-left: 1.5rem; color: var(--muted); font-size: 0.95rem; line-height: 1.65; }
+.legal__list li::before { content: ""; position: absolute; left: 0.28rem; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--grad-warm); }
+.legal__note { padding: 0.95rem 1.2rem; margin: 1.1rem 0 0.9rem; background: var(--cream); border-left: 3px solid var(--orange); border-radius: 0 12px 12px 0; color: var(--ink) !important; font-size: 0.93rem !important; }
+
+/* --- Closing contact card ----------------------------------------------- */
+.legal__contact { margin-top: clamp(2rem, 4vw, 3rem); padding: clamp(1.6rem, 3.5vw, 2.4rem); border-radius: var(--radius); color: var(--white); background: radial-gradient(300px 200px at 88% 6%, rgba(230,134,45,0.45), transparent 70%), linear-gradient(158deg, var(--ink-3), var(--ink) 82%); }
+.legal__contact-eyebrow { font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); }
+.legal__contact-title { color: var(--white); font-size: clamp(1.35rem, 2.6vw, 1.8rem); margin: 0.5rem 0 0.6rem; }
+.legal__contact p { color: rgba(255,255,255,0.74) !important; max-width: 40ch; }
+.legal__contact-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.3rem; }
+.legal__contact .btn--ghost { color: var(--white); border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); }
+.legal__contact .btn--ghost:hover { border-color: var(--orange); color: var(--orange); }
+
+@media (max-width: 900px) {
+  .legal__grid { grid-template-columns: minmax(0, 1fr); }
+  .legal__aside { position: static; }
+  .legal__toc { max-height: none; }
+  .legal__toc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); display: grid; }
+  .legal__body { max-width: none; }
+}
+@media (max-width: 560px) {
+  .legal__toc-list { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* =============================================================================
+   404 — page not found
+   ============================================================================= */
+.nf { position: relative; min-height: 100vh; display: grid; place-items: center; overflow: hidden; padding: clamp(3rem, 8vh, 5rem) 0; background: linear-gradient(180deg, var(--ink), var(--ink-2) 60%, var(--ink-3)); color: var(--white); }
+.nf__bg { position: absolute; inset: 0; pointer-events: none; }
+.nf__inner { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; }
+
+.nf__brand { display: inline-flex; align-items: center; gap: 0.6rem; margin-bottom: clamp(1.5rem, 4vh, 2.5rem); }
+.nf__brand-mark { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 13px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); color: var(--white); }
+.nf__brand-mark svg { width: 56%; height: 56%; }
+.nf__brand-word { font-family: var(--ff-head); font-weight: 800; font-size: 1.24rem; color: var(--white); letter-spacing: -0.01em; }
+.nf__brand-word b { color: var(--orange); }
+
+/* Oversized ghost numeral behind the headline */
+.nf__code { position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); margin: 0; z-index: -1; font-family: var(--ff-head); font-weight: 800; font-size: clamp(11rem, 34vw, 26rem); line-height: 1; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.07); user-select: none; white-space: nowrap; }
+
+.nf__eyebrow { font-family: var(--ff-head); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
+.nf__title { font-size: clamp(1.9rem, 5.2vw, 3.4rem); line-height: 1.12; letter-spacing: -0.025em; color: var(--white); margin: 0.9rem 0 0; max-width: 18ch; }
+.nf__lead { color: rgba(255,255,255,0.66); font-size: 1.02rem; line-height: 1.65; margin: 1.1rem 0 0; max-width: 46ch; }
+.nf__actions { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-top: 1.9rem; }
+.nf__actions .btn--ghost { color: var(--white); border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); }
+.nf__actions .btn--ghost:hover { border-color: var(--orange); color: var(--orange); }
+
+.nf__links { width: 100%; max-width: 760px; margin-top: clamp(2.4rem, 6vh, 3.6rem); padding-top: clamp(1.6rem, 4vh, 2.2rem); border-top: 1px solid rgba(255,255,255,0.1); }
+.nf__links-head { font-family: var(--ff-head); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.42); margin: 0 0 1.1rem; }
+.nf__links-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.7rem; }
+.nf__link { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1rem; text-align: left; background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease); }
+.nf__link:hover { background: rgba(255,255,255,0.08); border-color: rgba(230,134,45,0.5); transform: translateY(-3px); }
+.nf__link-ico { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--orange); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nf__link span { display: flex; flex-direction: column; gap: 0.12rem; }
+.nf__link strong { font-family: var(--ff-head); font-weight: 700; font-size: 0.92rem; color: var(--white); }
+.nf__link small { font-size: 0.76rem; line-height: 1.4; color: rgba(255,255,255,0.5); }
+
+@media (max-width: 760px) { .nf__links-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .nf__links-grid { grid-template-columns: minmax(0, 1fr); } }

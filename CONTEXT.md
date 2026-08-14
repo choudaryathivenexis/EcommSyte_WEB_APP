@@ -271,6 +271,11 @@ all motion respects `prefers-reduced-motion` and disables on touch (`hover: none
   roles list (visibility toggle, delete-with-confirm, drag-reorder via upsert-on-drop).
   `noindex,nofollow`; not linked in nav. Same table/RLS as above; needs an admin user
   created in Supabase Auth. All ops are try/caught and all DOM refs null-guarded.
+- **privacy.html (`/privacy`) & terms.html (`/terms`):** long-form legal pages sharing the
+  `.legal-*` system — page-hero with a "Last updated" stamp, a sticky numbered table of
+  contents beside the document, and a dark contact card at the end. Content is written for
+  ecommsyte (own services, contact details, remote-first operating model); linked from the
+  footer bottom strip (`.footer__legal`) on every page.
 - **contact.html:** page-hero → booking form (`#book` / `#bookingForm`) →
   contact info + quick message (`#contactForm`) → FAQ (`<details>`).
 
