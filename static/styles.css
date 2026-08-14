@@ -1690,7 +1690,14 @@ body.is-loading { overflow: hidden; }
 .bcard__thumb--photo { background: var(--ink-3); }
 .bcard__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; transition: transform 0.55s var(--ease); }
 .bcard:hover .bcard__img { transform: scale(1.05); }
-.bcard__thumb--photo::after { z-index: 1; background-image: linear-gradient(180deg, rgba(29,30,32,0) 42%, rgba(29,30,32,0.55)); }
+/* Photo thumbs swap the dot texture for a bottom scrim. The dot rule sets
+   background-size:15px, which would tile this gradient into stripes — so reset
+   the sizing/repeat and run the scrim at full strength. */
+.bcard__thumb--photo::after {
+  z-index: 1; opacity: 1;
+  background-image: linear-gradient(180deg, rgba(29,30,32,0) 42%, rgba(29,30,32,0.55));
+  background-size: 100% 100%; background-repeat: no-repeat;
+}
 .bcard--feature .bcard__thumb--photo { min-height: 280px; }
 
 /* ---- Article hero (cinematic) ---- */
