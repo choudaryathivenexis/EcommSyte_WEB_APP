@@ -1757,8 +1757,11 @@ body.is-loading { overflow: hidden; }
 .post__body li { margin-top: 0.55rem; color: #34363b; font-size: 1.045rem; line-height: 1.72; padding-left: 0.2rem; }
 .post__body li::marker { color: var(--orange); }
 .post__body li strong { color: var(--ink); }
-.post__body a { color: #b4611a; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.2s; }
-.post__body a:hover { color: var(--orange); }
+/* :not(.btn) — inline prose links get the underline; buttons must not */
+.post__body a:not(.btn) { color: #b4611a; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.2s; }
+.post__body a:not(.btn):hover { color: var(--orange); }
+.post__body .btn { text-decoration: none; }
+.post__body .btn--primary { color: var(--ink); }
 .post__body strong { color: var(--ink); font-weight: 700; }
 .post__body blockquote { margin: 2rem 0; padding: 1.2rem 1.6rem; border-radius: var(--radius-sm); border-left: 3px solid var(--orange); background: linear-gradient(120deg, rgba(230,134,45,0.06), rgba(242,166,90,0.03)); font-family: var(--ff-head); font-weight: 500; font-style: italic; font-size: clamp(1.15rem, 2.2vw, 1.35rem); line-height: 1.45; color: var(--ink); }
 .post__body figure { margin: 2rem 0; }
