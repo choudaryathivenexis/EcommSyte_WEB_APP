@@ -2529,13 +2529,14 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
   background: linear-gradient(158deg, var(--ink-3), var(--ink) 82%); color: var(--white);
   border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; overflow: hidden;
   box-shadow: 0 40px 100px -30px rgba(0,0,0,0.75);
+  min-height: 0;
   transform: translateY(20px) scale(0.975); opacity: 0;
   transition: transform 0.45s var(--ease), opacity 0.4s var(--ease);
 }
 .ssm.open .ssm__dialog { transform: none; opacity: 1; }
 
 /* media */
-.ssm__media { position: relative; overflow: hidden; background: var(--ink-2); }
+.ssm__media { position: relative; overflow: hidden; background: var(--ink-2); min-height: 0; }
 .ssm__img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .ssm__media::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, rgba(20,21,23,0) 55%, rgba(20,21,23,0.55)); }
 
@@ -2545,8 +2546,17 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
 .ssm__close:hover, .ssm__close:focus-visible { background: var(--orange); color: var(--ink); transform: rotate(90deg); }
 
 /* body */
-.ssm__body { min-width: 0; overflow-y: auto; padding: clamp(1.6rem, 3.2vw, 2.6rem); scrollbar-width: none; -ms-overflow-style: none; }
-.ssm__body::-webkit-scrollbar { width: 0; height: 0; }
+/* min-height:0 lets this grid child shrink so overflow-y actually scrolls */
+.ssm__body {
+  min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: clamp(1.6rem, 3.2vw, 2.6rem);
+  scrollbar-width: thin; scrollbar-color: rgba(230,134,45,0.55) transparent;
+}
+/* slim, on-brand scrollbar — visible affordance without the chunky default */
+.ssm__body::-webkit-scrollbar { width: 6px; }
+.ssm__body::-webkit-scrollbar-track { background: transparent; }
+.ssm__body::-webkit-scrollbar-thumb { background: rgba(230,134,45,0.5); border-radius: 999px; }
+.ssm__body::-webkit-scrollbar-thumb:hover { background: rgba(230,134,45,0.8); }
 .ssm__eyebrow { font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); margin: 0 3rem 0.7rem 0; }
 .ssm__title { font-family: var(--ff-head); font-weight: 800; font-size: clamp(1.45rem, 3vw, 2.05rem); line-height: 1.14; letter-spacing: -0.02em; color: var(--white); margin: 0 2.5rem 0 0; }
 .ssm__rule { display: block; width: 54px; height: 3px; border-radius: 3px; background: var(--grad-warm); margin: 1rem 0 1.2rem; }
