@@ -2553,13 +2553,10 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
 .ssm__body {
   min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
   padding: clamp(1.6rem, 3.2vw, 2.6rem);
-  scrollbar-width: thin; scrollbar-color: rgba(230,134,45,0.55) transparent;
+  scroll-behavior: smooth;
+  scrollbar-width: none; -ms-overflow-style: none;   /* no visible scrollbar */
 }
-/* slim, on-brand scrollbar — visible affordance without the chunky default */
-.ssm__body::-webkit-scrollbar { width: 6px; }
-.ssm__body::-webkit-scrollbar-track { background: transparent; }
-.ssm__body::-webkit-scrollbar-thumb { background: rgba(230,134,45,0.5); border-radius: 999px; }
-.ssm__body::-webkit-scrollbar-thumb:hover { background: rgba(230,134,45,0.8); }
+.ssm__body::-webkit-scrollbar { width: 0; height: 0; }
 .ssm__eyebrow { font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); margin: 0 3rem 0.7rem 0; }
 .ssm__title { font-family: var(--ff-head); font-weight: 800; font-size: clamp(1.45rem, 3vw, 2.05rem); line-height: 1.14; letter-spacing: -0.02em; color: var(--white); margin: 0 2.5rem 0 0; }
 .ssm__rule { display: block; width: 54px; height: 3px; border-radius: 3px; background: var(--grad-warm); margin: 1rem 0 1.2rem; }
@@ -2611,6 +2608,7 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
   .ssm__cta-shaft, .ssm__cta-head { transition: none; }
   .ssm__cta-shaft { transform: scaleX(1); opacity: 1; }
   .ssm__cta-head { transform: none; }
+  .ssm__body { scroll-behavior: auto; }
   .ssm__dialog { transform: none; }
   .ssm__cta:hover, .ssm__close:hover { transform: none; }
 }
