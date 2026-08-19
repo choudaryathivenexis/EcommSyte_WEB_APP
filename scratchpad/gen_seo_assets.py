@@ -91,56 +91,88 @@ def wrap(draw, text, f, max_w):
     return lines
 
 
-def og_image(out, eyebrow, title, sub):
+def track(d, xy, text, f, fill, spacing=0):
+    """Draw text with manual letter-spacing (PIL has no native tracking)."""
+    x, y = xy
+    for ch in text:
+        d.text((x, y), ch, font=f, fill=fill)
+        x += d.textlength(ch, font=f) + spacing
+    return x
+
+
+def track_width(d, text, f, spacing=0):
+    return sum(d.textlength(c, font=f) + spacing for c in text) - spacing
+
+
+def og_image(out, label):
+    """Brand-led share card: the logo is the subject, the page label is a caption."""
     W, H = 1200, 630
     im = Image.new("RGB", (W, H), INK)
     d = ImageDraw.Draw(im)
 
-    # vertical brand gradient + warm glow in the top-right
+    # brand gradient
     for y in range(H):
         t = y / H
         d.line([(0, y), (W, y)],
                fill=(int(INK_3[0] + (INK[0] - INK_3[0]) * t),
                      int(INK_3[1] + (INK[1] - INK_3[1]) * t),
                      int(INK_3[2] + (INK[2] - INK_3[2]) * t)))
+
+    # two diffuse brand glows framing the mark
     glow = Image.new("RGB", (W, H), INK)
     gd = ImageDraw.Draw(glow)
-    gd.ellipse([W - 520, -340, W + 240, 300], fill=ORANGE)
-    glow = glow.filter(ImageFilter.GaussianBlur(120))   # diffuse, no hard arc
-    im = Image.blend(im, glow, 0.30)
+    gd.ellipse([W // 2 - 420, -260, W // 2 + 420, 360], fill=ORANGE)
+    gd.ellipse([-260, H - 240, 360, H + 260], fill=AMBER)
+    glow = glow.filter(ImageFilter.GaussianBlur(150))
+    im = Image.blend(im, glow, 0.26)
     d = ImageDraw.Draw(im)
 
-    # subtle grid texture
-    for x in range(0, W, 40):
-        d.line([(x, 0), (x, H)], fill=(38, 40, 44))
-    for y in range(0, H, 40):
-        d.line([(0, y), (W, y)], fill=(38, 40, 44))
+    # fine grid texture
+    for x in range(0, W, 44):
+        d.line([(x, 0), (x, H)], fill=(39, 41, 45))
+    for y in range(0, H, 44):
+        d.line([(0, y), (W, y)], fill=(39, 41, 45))
 
-    PAD = 74
-    badge = draw_mark(96)
-    im.paste(badge, (PAD, PAD), badge)
-    d.text((PAD + 118, PAD + 20), "ecomm", font=font(FONT_BOLD, 38), fill=WHITE)
-    wlen = d.textlength("ecomm", font=font(FONT_BOLD, 38))
-    d.text((PAD + 118 + wlen, PAD + 20), "syte", font=font(FONT_BOLD, 38), fill=ORANGE)
+    # ── the logo, centred and dominant ──────────────────────────────────────
+    BADGE = 188
+    badge = draw_mark(BADGE)
+    bx, by = (W - BADGE) // 2, 116
+    # soft halo behind the badge so it lifts off the background
+    halo = Image.new("RGB", (W, H), (0, 0, 0))
+    hd = ImageDraw.Draw(halo)
+    hd.rounded_rectangle([bx - 26, by - 26, bx + BADGE + 26, by + BADGE + 26],
+                         radius=70, fill=(120, 66, 20))
+    halo = halo.filter(ImageFilter.GaussianBlur(46))
+    im = Image.blend(im, Image.blend(im, halo, 0.0), 0.0)  # keep base
+    im.paste(Image.blend(im.crop((0, 0, W, H)), halo, 0.35), (0, 0))
+    im.paste(badge, (bx, by), badge)
+    d = ImageDraw.Draw(im)
 
-    y = 250
-    if eyebrow:
-        d.text((PAD, y), eyebrow.upper(), font=font(FONT_SEMI, 22), fill=ORANGE)
-        y += 46
+    # wordmark
+    f_word = font(FONT_BOLD, 78)
+    w1 = d.textlength("ecomm", font=f_word)
+    w2 = d.textlength("syte", font=f_word)
+    wx = (W - (w1 + w2)) / 2
+    wy = by + BADGE + 40
+    d.text((wx, wy), "ecomm", font=f_word, fill=WHITE)
+    d.text((wx + w1, wy), "syte", font=f_word, fill=ORANGE)
 
-    f_title = font(FONT_BOLD, 62)
-    for line in wrap(d, title, f_title, W - PAD * 2 - 40)[:3]:
-        d.text((PAD, y), line, font=f_title, fill=WHITE)
-        y += 74
+    # tagline, letter-spaced
+    f_tag = font(FONT_SEMI, 25)
+    tag = "STRATEGY-DRIVEN AMAZON GROWTH"
+    tw = track_width(d, tag, f_tag, 4.2)
+    track(d, ((W - tw) / 2, wy + 104), tag, f_tag, MUTED, 4.2)
 
-    if sub:
-        y += 12
-        f_sub = font(FONT_REG, 27)
-        for line in wrap(d, sub, f_sub, W - PAD * 2 - 120)[:2]:
-            d.text((PAD, y), line, font=f_sub, fill=MUTED)
-            y += 38
+    # page caption
+    if label:
+        f_lbl = font(FONT_SEMI, 22)
+        lw = track_width(d, label.upper(), f_lbl, 3.0)
+        ly = wy + 158
+        d.rounded_rectangle([(W - lw) / 2 - 22, ly - 12, (W + lw) / 2 + 22, ly + 34],
+                            radius=24, outline=(92, 62, 34), width=2)
+        track(d, ((W - lw) / 2, ly), label.upper(), f_lbl, ORANGE, 3.0)
 
-    # brand rule along the bottom edge
+    # brand rule
     for x in range(W):
         t = x / W
         d.line([(x, H - 9), (x, H)],
@@ -148,24 +180,24 @@ def og_image(out, eyebrow, title, sub):
                      int(ORANGE[1] + (AMBER[1] - ORANGE[1]) * t),
                      int(ORANGE[2] + (AMBER[2] - ORANGE[2]) * t)))
 
-    im.save(out, "JPEG", quality=88, optimize=True, progressive=True)
+    im.save(out, "JPEG", quality=90, optimize=True, progressive=True)
     return os.path.getsize(out)
 
 
 os.makedirs("static/og", exist_ok=True)
 PAGES = [
-    ("og-default.jpg",      "Strategy-Driven Amazon Growth", "The full-service Amazon growth agency", "Strategy, advertising, creative and operations — one accountable team."),
-    ("og-home.jpg",         "Amazon Growth Agency",          "We turn Amazon stores into category leaders", "120+ brands scaled. Profit-first advertising, premium creative, real operations."),
-    ("og-services.jpg",     "What we do",                    "Eight services covering your entire Amazon journey", "From product research and sourcing to PPC, creative and multichannel."),
-    ("og-about.jpg",        "About ecommsyte",               "Specialists, not generalists",              "A remote-first team scaling brands across the US, UK, EU and UAE."),
-    ("og-testimonials.jpg", "Client results",                "What our partners say",                     "Founders and brand owners on what it's like to grow with ecommsyte."),
-    ("og-blog.jpg",         "Insights",                      "Growth insights, minus the fluff",          "Tactics, marketplace updates and data we actually use with clients."),
-    ("og-careers.jpg",      "Careers",                       "Do the best work of your career",            "Remote-first, senior-only teams, real ownership."),
-    ("og-contact.jpg",      "Get in touch",                  "Book your free consultation",                "A 30-minute call, a full account audit, and a plan you keep."),
-    ("og-privacy.jpg",      "Privacy Policy",                "Your data, handled with care",               "What we collect, why, and the control you have over it."),
-    ("og-terms.jpg",        "Terms of Service",              "The terms we work by",                       "Clear ground rules for using our site and working with our team."),
+    ("og-default.jpg",      ""),
+    ("og-home.jpg",         ""),
+    ("og-services.jpg",     "Services"),
+    ("og-about.jpg",        "About"),
+    ("og-testimonials.jpg", "Testimonials"),
+    ("og-blog.jpg",         "Insights"),
+    ("og-careers.jpg",      "Careers"),
+    ("og-contact.jpg",      "Contact"),
+    ("og-privacy.jpg",      "Privacy Policy"),
+    ("og-terms.jpg",        "Terms of Service"),
 ]
 total = 0
-for name, eyebrow, title, sub in PAGES:
-    total += og_image(f"static/og/{name}", eyebrow, title, sub)
+for name, label in PAGES:
+    total += og_image(f"static/og/{name}", label)
 print(f"  og images: {len(PAGES)} files, {total/1024:.0f} KB total")
