@@ -2526,6 +2526,9 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
 .ssm__dialog {
   position: relative; width: 100%; max-width: 1060px; max-height: min(88vh, 780px);
   display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  /* the row must be capped too — an auto row sizes to content and ignores
+     the dialog's max-height, which is what stopped the body scrolling */
+  grid-template-rows: minmax(0, 1fr);
   background: linear-gradient(158deg, var(--ink-3), var(--ink) 82%); color: var(--white);
   border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; overflow: hidden;
   box-shadow: 0 40px 100px -30px rgba(0,0,0,0.75);
