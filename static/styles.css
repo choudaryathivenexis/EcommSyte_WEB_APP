@@ -2514,3 +2514,79 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
   .to-top, .to-top::before, .to-top__arrow, .to-top__label, .to-top__bar { transition: none; }
   .to-top:hover, .to-top:focus-visible { transform: none; }
 }
+
+/* =============================================================================
+   SUB-SERVICE DETAIL MODAL (services page) — static/subservice-modal.js
+   Split dialog: artwork one side, the full breakdown the other.
+   ============================================================================= */
+.ssm { position: fixed; inset: 0; z-index: 220; display: grid; place-items: center; padding: clamp(0.75rem, 3vw, 2rem); opacity: 0; visibility: hidden; transition: opacity 0.32s var(--ease), visibility 0.32s; }
+.ssm.open { opacity: 1; visibility: visible; }
+.ssm__overlay { position: absolute; inset: 0; background: rgba(14, 15, 17, 0.72); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); }
+
+.ssm__dialog {
+  position: relative; width: 100%; max-width: 1060px; max-height: min(88vh, 780px);
+  display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  background: linear-gradient(158deg, var(--ink-3), var(--ink) 82%); color: var(--white);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; overflow: hidden;
+  box-shadow: 0 40px 100px -30px rgba(0,0,0,0.75);
+  transform: translateY(20px) scale(0.975); opacity: 0;
+  transition: transform 0.45s var(--ease), opacity 0.4s var(--ease);
+}
+.ssm.open .ssm__dialog { transform: none; opacity: 1; }
+
+/* media */
+.ssm__media { position: relative; overflow: hidden; background: var(--ink-2); }
+.ssm__img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.ssm__media::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, rgba(20,21,23,0) 55%, rgba(20,21,23,0.55)); }
+
+/* close */
+.ssm__close { position: absolute; top: 0.95rem; right: 0.95rem; z-index: 4; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; color: var(--white); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); -webkit-backdrop-filter: blur(9px); backdrop-filter: blur(9px); transition: background 0.25s, color 0.25s, transform 0.35s var(--ease); }
+.ssm__close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; }
+.ssm__close:hover, .ssm__close:focus-visible { background: var(--orange); color: var(--ink); transform: rotate(90deg); }
+
+/* body */
+.ssm__body { min-width: 0; overflow-y: auto; padding: clamp(1.6rem, 3.2vw, 2.6rem); scrollbar-width: none; -ms-overflow-style: none; }
+.ssm__body::-webkit-scrollbar { width: 0; height: 0; }
+.ssm__eyebrow { font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); margin: 0 3rem 0.7rem 0; }
+.ssm__title { font-family: var(--ff-head); font-weight: 800; font-size: clamp(1.45rem, 3vw, 2.05rem); line-height: 1.14; letter-spacing: -0.02em; color: var(--white); margin: 0 2.5rem 0 0; }
+.ssm__rule { display: block; width: 54px; height: 3px; border-radius: 3px; background: var(--grad-warm); margin: 1rem 0 1.2rem; }
+.ssm__short { font-size: 1.04rem; line-height: 1.6; color: rgba(255,255,255,0.94); margin: 0 0 0.9rem; font-weight: 500; }
+.ssm__detail { font-size: 0.94rem; line-height: 1.72; color: rgba(255,255,255,0.62); margin: 0 0 1.6rem; }
+
+.ssm__blocks { display: grid; gap: 1.5rem; }
+.ssm__block-title { font-family: var(--ff-head); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin: 0 0 0.7rem; padding-bottom: 0.55rem; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.ssm__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.ssm__list li { position: relative; padding-left: 1.35rem; font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.86); }
+.ssm__list li::before { content: ""; position: absolute; left: 0.15rem; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--grad-warm); }
+
+.ssm__actions { margin-top: 1.9rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.12); display: flex; flex-wrap: wrap; align-items: center; gap: 0.65rem 1.1rem; }
+.ssm__cta { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 52px; padding: 0.85rem 1.7rem; border: 0; border-radius: 999px; cursor: pointer; font-family: var(--ff-head); font-weight: 800; font-size: 0.94rem; letter-spacing: 0.01em; color: var(--ink); background: var(--grad-warm); box-shadow: 0 14px 32px rgba(230,134,45,0.4); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+.ssm__cta:hover, .ssm__cta:focus-visible { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(230,134,45,0.52); }
+.ssm__cta span:last-child { transition: transform 0.3s var(--ease); }
+.ssm__cta:hover span:last-child { transform: translateX(4px); }
+.ssm__note { font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.42); margin: 0; }
+
+/* wide dialogs: lead block full width, the other two side by side */
+@media (min-width: 1000px) {
+  .ssm__blocks { grid-template-columns: 1fr 1fr; column-gap: 1.8rem; }
+  .ssm__block:first-child { grid-column: 1 / -1; }
+  .ssm__block:first-child .ssm__list { grid-template-columns: 1fr 1fr; column-gap: 1.8rem; }
+}
+/* stack under ~880px: artwork becomes a banner above the copy */
+@media (max-width: 880px) {
+  .ssm__dialog { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); max-height: 92vh; }
+  .ssm__media { height: clamp(150px, 26vh, 230px); }
+  .ssm__media::after { background: linear-gradient(180deg, rgba(20,21,23,0) 45%, rgba(20,21,23,0.6)); }
+  .ssm__eyebrow, .ssm__title { margin-right: 0; }
+}
+@media (max-width: 520px) {
+  .ssm__dialog { border-radius: 18px; }
+  .ssm__actions { flex-direction: column; align-items: stretch; }
+  .ssm__cta { justify-content: center; width: 100%; }
+  .ssm__note { text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ssm, .ssm__dialog, .ssm__cta, .ssm__close, .ssm__cta span:last-child { transition: none; }
+  .ssm__dialog { transform: none; }
+  .ssm__cta:hover, .ssm__close:hover { transform: none; }
+}
