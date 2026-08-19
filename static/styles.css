@@ -2575,8 +2575,16 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
 .ssm__actions { margin-top: 1.9rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.12); display: flex; flex-wrap: wrap; align-items: center; gap: 0.65rem 1.1rem; }
 .ssm__cta { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 52px; padding: 0.85rem 1.7rem; border: 0; border-radius: 999px; cursor: pointer; font-family: var(--ff-head); font-weight: 800; font-size: 0.94rem; letter-spacing: 0.01em; color: var(--ink); background: var(--grad-warm); box-shadow: 0 14px 32px rgba(230,134,45,0.4); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
 .ssm__cta:hover, .ssm__cta:focus-visible { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(230,134,45,0.52); }
-.ssm__cta span:last-child { transition: transform 0.3s var(--ease); }
-.ssm__cta:hover span:last-child { transform: translateX(4px); }
+/* Arrow: the shaft draws out from the label as the head advances — the whole
+   mark reads as one motion rather than a glyph sliding sideways. */
+.ssm__cta-arrow { width: 22px; height: 16px; flex: none; overflow: visible; fill: none;
+  stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+.ssm__cta-shaft { transform-origin: left center; transform: scaleX(0.42); opacity: 0.72;
+  transition: transform 0.42s var(--ease), opacity 0.3s var(--ease); }
+.ssm__cta-head { transform: translateX(-4px);
+  transition: transform 0.42s var(--ease); }
+.ssm__cta:hover .ssm__cta-shaft, .ssm__cta:focus-visible .ssm__cta-shaft { transform: scaleX(1); opacity: 1; }
+.ssm__cta:hover .ssm__cta-head, .ssm__cta:focus-visible .ssm__cta-head { transform: translateX(0); }
 .ssm__note { font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.42); margin: 0; }
 
 /* wide dialogs: lead block full width, the other two side by side */
@@ -2599,7 +2607,10 @@ main[tabindex="-1"]:focus, #page-top[tabindex="-1"]:focus { outline: none; }
   .ssm__note { text-align: center; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ssm, .ssm__dialog, .ssm__cta, .ssm__close, .ssm__cta span:last-child { transition: none; }
+  .ssm, .ssm__dialog, .ssm__cta, .ssm__close,
+  .ssm__cta-shaft, .ssm__cta-head { transition: none; }
+  .ssm__cta-shaft { transform: scaleX(1); opacity: 1; }
+  .ssm__cta-head { transform: none; }
   .ssm__dialog { transform: none; }
   .ssm__cta:hover, .ssm__close:hover { transform: none; }
 }
