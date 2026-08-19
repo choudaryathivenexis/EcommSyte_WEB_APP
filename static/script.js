@@ -712,7 +712,7 @@
   if (!triggers.length) return;
 
   // Brand-themed Calendly embed (colors match the site palette)
-  var CAL_URL = "https://calendly.com/mailhussainali00/30min"
+  var CAL_URL = "https://calendly.com/ecomsyte/30min"
     + "?hide_gdpr_banner=1&background_color=fcfaf7&text_color=1d1e20&primary_color=e6862d";
 
   var modal = document.createElement("div");
